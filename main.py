@@ -697,35 +697,54 @@ def get_valuation_chart(symbol: str):
             
         df_price = pd.DataFrame(data_rows)
         
-        # 2. Fetch quarterly ratios using vnstock Fundamental (since SSI doesn't have it)
-        f = Fundamental().equity(symbol)
-        df_ratio = f.ratio(period='quarter')
-        # We need the df_ratio dataframe to contain market_cap, pe, pb, number_of_shares_mkt_cap
-        # Since Fundamental().ratio() returns something different than stock.company.ratio_summary(),
-        # Wait, web new used Vnstock().stock(symbol=symbol, source='VCI').company.ratio_summary()
-        from vnstock import Vnstock
-        stock = Vnstock().stock(symbol=symbol, source='VCI')
-        df_ratio = stock.company.ratio_summary()
-        if df_ratio.empty:
-            return {"status": "error", "message": "No ratio data"}
+        # 2. Fetch quarterly data from Vietcap APIs
+        url_fs = f"https://iq.vietcap.com.vn/api/iq-insight-service/v1/company/{symbol}/financial-statement?section=INCOME_STATEMENT"
+        url_stat = f"https://iq.vietcap.com.vn/api/iq-insight-service/v1/company/{symbol}/statistics-financial"
+        
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        res_fs = requests.get(url_fs, headers=headers).json()
+        res_stat = requests.get(url_stat, headers=headers).json()
+        
+        if not res_fs.get('successful') or not res_stat.get('successful'):
+            return {"status": "error", "message": "Failed to fetch data from Vietcap API"}
             
-        df_q = df_ratio[df_ratio['ratio_type'] == 'RATIO_TTM'].copy()
-        if df_q.empty:
-            return {"status": "error", "message": "No TTM ratio data"}
+        # Process INCOME_STATEMENT for LNST (isa22)
+        qs_fs = res_fs.get('data', {}).get('quarters', [])
+        if not qs_fs:
+            return {"status": "error", "message": "No income statement data"}
             
-        # Map quarter to a date (approximate release date, or end of quarter)
+        df_fs = pd.DataFrame(qs_fs)
+        df_fs['q_date'] = pd.to_datetime(df_fs['yearReport'].astype(str) + '-' + (df_fs['lengthReport'] * 3).astype(str) + '-01')
+        df_fs['LNST'] = df_fs.get('isa22', 0)
+        df_fs = df_fs.sort_values('q_date')
+        df_fs['LNST_TTM'] = df_fs['LNST'].rolling(4).sum()
+        df_fs['quarter'] = df_fs['lengthReport']
+        
+        # Process statistics-financial for market_cap, pb, number_of_shares_mkt_cap
+        qs_stat = res_stat.get('data', [])
+        if not qs_stat:
+            return {"status": "error", "message": "No statistics data"}
+            
+        df_stat = pd.DataFrame(qs_stat)
+        df_stat = df_stat[df_stat['ratioType'] == 'RATIO_TTM'].copy()
+        
         def get_quarter_end(y, q):
             if q == 1: return f'{y}-03-31'
             if q == 2: return f'{y}-06-30'
             if q == 3: return f'{y}-09-30'
             return f'{y}-12-31'
             
-        df_q['q_date'] = pd.to_datetime(df_q.apply(lambda row: get_quarter_end(row['year'], row['quarter']), axis=1))
+        df_stat['q_date_stat'] = pd.to_datetime(df_stat.apply(lambda row: get_quarter_end(row['yearReport'], row['quarter']), axis=1))
+        
+        # Merge the two datasets on yearReport and quarter
+        df_q = pd.merge(df_stat, df_fs[['yearReport', 'quarter', 'LNST_TTM']], on=['yearReport', 'quarter'], how='inner')
+        df_q['q_date'] = df_q['q_date_stat']
         
         # Calculate Total Earnings (TTM) and Total Equity for that quarter
-        # Using PE and PB at the end of that quarter
-        df_q['total_earnings'] = df_q['market_cap'] / df_q['pe']
-        df_q['total_equity'] = df_q['market_cap'] / df_q['pb']
+        df_q['total_earnings'] = df_q['LNST_TTM']
+        df_q['total_equity'] = df_q['marketCap'] / df_q['pb']
+        df_q['number_of_shares_mkt_cap'] = df_q['numberOfSharesMktCap']
+        
         df_q = df_q.sort_values('q_date').dropna(subset=['total_earnings', 'total_equity'])
         
         # 3. Merge asof (assign each day the latest available quarter data before it)
@@ -1036,11 +1055,65 @@ async def get_interest_rates():
         return {"error": str(e)}
 
 
-app.mount("/", StaticFiles(directory="static", html=True), name="static")
+_company_info_cache = {}
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8890, reload=True)
+def fetch_vietcap_api(endpoint: str, symbol: str, cache_type: str):
+    import time
+    import requests
+    global _company_info_cache
+    
+    cache_key = f"{symbol}_{cache_type}"
+    now = time.time()
+    
+    # Cache 30 mins
+    if cache_key in _company_info_cache and now - _company_info_cache[cache_key]['time'] < 1800:
+        return _company_info_cache[cache_key]['data']
+        
+    url = f"https://iq.vietcap.com.vn/api/iq-insight-service/{endpoint}"
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    
+    try:
+        res = requests.get(url, headers=headers, timeout=10)
+        if res.status_code == 200:
+            data = res.json()
+            _company_info_cache[cache_key] = {'time': now, 'data': data}
+            return data
+        return {"error": f"API returned status {res.status_code}"}
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.get("/api/company-details")
+async def get_company_details(symbol: str):
+    return fetch_vietcap_api(f"v1/company/details?ticker={symbol.upper()}", symbol, "details")
+
+@app.get("/api/company-shareholder-structure")
+async def get_company_shareholder_structure(symbol: str):
+    return fetch_vietcap_api(f"v1/company/{symbol.upper()}/shareholder-structure", symbol, "shareholder-structure")
+
+@app.get("/api/company-shareholders")
+async def get_company_shareholders(symbol: str):
+    return fetch_vietcap_api(f"v1/company/{symbol.upper()}/shareholder", symbol, "shareholders")
+
+@app.get("/api/company-relationships")
+async def get_company_relationships(symbol: str):
+    return fetch_vietcap_api(f"v1/company/{symbol.upper()}/relationship", symbol, "relationships")
+
+@app.get("/api/company-events")
+async def get_company_events(symbol: str):
+    from datetime import datetime, timedelta
+    symbol = symbol.upper()
+    end_date = datetime.now().strftime('%Y-%m-%d')
+    start_date = (datetime.now() - timedelta(days=365*2)).strftime('%Y-%m-%d')
+    return fetch_vietcap_api(f"v1/events?ticker={symbol}&fromDate={start_date}&toDate={end_date}", symbol, "events")
+
+@app.get("/api/company-news")
+async def get_company_news(symbol: str, page: int = 0, size: int = 20):
+    # Vietcap API is 0-indexed for pages
+    from datetime import datetime, timedelta
+    symbol = symbol.upper()
+    end_date = datetime.now().strftime('%Y-%m-%d')
+    start_date = (datetime.now() - timedelta(days=365*2)).strftime('%Y-%m-%d')
+    return fetch_vietcap_api(f"v1/news?ticker={symbol}&fromDate={start_date}&toDate={end_date}&page={page}&size={size}", f"{symbol}_p{page}", "news")
 
 @app.get('/api/realtime-prices')
 async def get_realtime_prices(symbols: str):
@@ -1057,3 +1130,8 @@ async def get_realtime_prices(symbols: str):
     except Exception as e:
         return {'data': []}
 
+app.mount("/", StaticFiles(directory="static", html=True), name="static")
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=8890, reload=True)

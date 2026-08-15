@@ -1125,6 +1125,10 @@ body.light-theme .drawing-dropdown-content button:hover {
                 </div>
             </div>
 
+            <div style="padding: 0 20px 15px 20px;">
+                <button onclick="window.open('/company.html?symbol=' + (document.getElementById('sisSymbol') ? document.getElementById('sisSymbol').innerText.trim() : 'FPT'), 'companyInfo', 'width=1000,height=800')" class="indicator-btn" style="width: 100%; justify-content: center; background: rgba(41, 98, 255, 0.1); color: var(--accent-blue); border-color: rgba(41, 98, 255, 0.3); font-size: 14px; padding: 10px 0;">🏢 Thông tin Doanh nghiệp</button>
+            </div>
+
             <div class="sis-tabs">
                 <div class="sis-tab active" onclick="switchSisTab('overview')">Tổng hợp</div>
                 <div class="sis-tab" onclick="switchSisTab('orderbook')">Sổ lệnh</div>
@@ -7129,6 +7133,392 @@ var isDivergenceOn = false;
             };
         }
         
+    </script>
+    <!-- Company Modal HTML -->
+    <style>
+        .company-modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.75); z-index: 3000;
+            display: none; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .company-modal-overlay.show { display: flex; }
+        .company-modal {
+            background: var(--bg-surface, #1e222d); width: 95%; max-width: 1400px; height: 90%;
+            border-radius: 12px; border: 1px solid var(--border-strong, #363c4e);
+            display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            color: var(--text-primary, #d1d4dc);
+        }
+        body.light-theme .company-modal { background: #ffffff; color: #131722; border-color: #e0e0e0; }
+        .cm-header {
+            padding: 16px 24px; border-bottom: 1px solid var(--border-subtle, #2a2e39);
+            display: flex; justify-content: space-between; align-items: center; background: var(--bg-elevated, #161a25);
+        }
+        body.light-theme .cm-header { background: #f8f9fa; border-color: #e0e0e0; }
+        .cm-header h2 { margin: 0; font-size: 22px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .cm-close { color: #a3a6af; cursor: pointer; font-size: 24px; transition: 0.2s; line-height: 1; }
+        .cm-close:hover { color: #ffffff; }
+        body.light-theme .cm-close:hover { color: #000; }
+        
+        .cm-tabs {
+            display: flex; background: var(--bg-surface, #1e222d); border-bottom: 1px solid var(--border-subtle, #2a2e39);
+            padding: 0 24px;
+        }
+        body.light-theme .cm-tabs { background: #ffffff; border-color: #e0e0e0; }
+        .cm-tab {
+            padding: 16px 20px; font-weight: 600; font-size: 15px; color: var(--text-secondary, #787b86);
+            cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s;
+        }
+        .cm-tab:hover { color: var(--text-primary, #d1d4dc); }
+        .cm-tab.active { color: var(--accent-blue, #2962ff); border-bottom-color: var(--accent-blue, #2962ff); }
+        body.light-theme .cm-tab:hover { color: #131722; }
+        body.light-theme .cm-tab.active { color: #2962ff; }
+        
+        .cm-content { flex: 1; overflow-y: auto; padding: 24px; background: var(--bg-deep, #131722); position: relative; }
+        body.light-theme .cm-content { background: #f0f3fa; }
+        .cm-tab-pane { display: none; height: 100%; }
+        .cm-tab-pane.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* Overview Tab */
+        .cm-overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+        .cm-card {
+            background: var(--bg-surface, #1e222d); border: 1px solid var(--border-subtle, #2a2e39);
+            border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        body.light-theme .cm-card { background: #fff; border-color: #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .cm-card-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text-primary); border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px; }
+        body.light-theme .cm-card-title { color: #1e293b; border-color: #e2e8f0; }
+        .cm-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .cm-stat-item { display: flex; flex-direction: column; gap: 4px; }
+        .cm-stat-label { font-size: 13px; color: var(--text-secondary); }
+        .cm-stat-value { font-size: 16px; font-weight: 600; font-family: var(--font-mono); }
+        .cm-profile-text { font-size: 14px; line-height: 1.6; color: var(--text-secondary); white-space: pre-wrap; }
+        
+        /* Table Styles */
+        .cm-table { width: 100%; border-collapse: collapse; }
+        .cm-table th { text-align: left; padding: 12px 16px; background: rgba(0,0,0,0.2); color: var(--text-secondary); font-size: 13px; font-weight: 600; border-bottom: 1px solid var(--border-strong); }
+        body.light-theme .cm-table th { background: #f8fafc; border-color: #cbd5e1; }
+        .cm-table td { padding: 12px 16px; border-bottom: 1px solid var(--border-subtle); font-size: 14px; }
+        body.light-theme .cm-table td { border-color: #e2e8f0; }
+        .cm-table tr:hover td { background: rgba(255,255,255,0.02); }
+        body.light-theme .cm-table tr:hover td { background: #f1f5f9; }
+        .cm-badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+        .cm-badge.blue { background: rgba(41, 98, 255, 0.15); color: #2979ff; }
+        .cm-badge.green { background: rgba(76, 175, 80, 0.15); color: #4caf50; }
+        .cm-badge.orange { background: rgba(255, 152, 0, 0.15); color: #ff9800; }
+        
+        /* Event Timeline */
+        .cm-timeline { display: flex; flex-direction: column; gap: 16px; }
+        .cm-event-card {
+            background: var(--bg-surface); border: 1px solid var(--border-subtle); border-left: 4px solid var(--accent-blue);
+            border-radius: 4px 8px 8px 4px; padding: 16px; display: flex; gap: 16px;
+        }
+        body.light-theme .cm-event-card { background: #fff; border-color: #e2e8f0; }
+        .cm-event-date { min-width: 100px; font-weight: 700; color: var(--accent-blue); font-family: var(--font-mono); }
+        .cm-event-content { flex: 1; }
+        .cm-event-title { font-weight: 600; font-size: 15px; margin-bottom: 8px; }
+        
+        /* News List */
+        .cm-news-list { display: flex; flex-direction: column; gap: 16px; }
+        .cm-news-item {
+            display: flex; gap: 16px; background: var(--bg-surface); border: 1px solid var(--border-subtle);
+            border-radius: 8px; overflow: hidden; transition: transform 0.2s; text-decoration: none; color: inherit;
+        }
+        body.light-theme .cm-news-item { background: #fff; border-color: #e2e8f0; }
+        .cm-news-item:hover { transform: translateY(-2px); border-color: var(--accent-blue); }
+        .cm-news-img { width: 160px; height: 120px; object-fit: cover; background: #2a2e39; }
+        .cm-news-content { padding: 16px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .cm-news-title { font-weight: 600; font-size: 15px; margin: 0 0 8px 0; line-height: 1.4; }
+        .cm-news-date { font-size: 12px; color: var(--text-secondary); }
+        
+        .cm-loading {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 10;
+        }
+        .cm-spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--accent-blue); border-radius: 50%; animation: spin 1s infinite linear; }
+    </style>
+    <div id="companyModal" class="company-modal-overlay" onclick="if(event.target===this) closeCompanyModal()">
+        <div class="company-modal">
+            <div class="cm-header">
+                <h2>🏢 <span id="cmModalTitle">Thông tin Doanh nghiệp</span></h2>
+                <div class="cm-close" onclick="closeCompanyModal()">✕</div>
+            </div>
+            <div class="cm-tabs">
+                <div class="cm-tab active" onclick="switchCmTab('overview')">Tổng quan</div>
+                <div class="cm-tab" onclick="switchCmTab('shareholders')">Cổ đông</div>
+                <div class="cm-tab" onclick="switchCmTab('relationships')">Công ty liên kết</div>
+                <div class="cm-tab" onclick="switchCmTab('events')">Sự kiện</div>
+                <div class="cm-tab" onclick="switchCmTab('news')">Tin tức</div>
+            </div>
+            <div class="cm-content">
+                <div id="cmLoading" class="cm-loading"><div class="cm-spinner"></div></div>
+                
+                <div id="cmTab-overview" class="cm-tab-pane active">
+                    <div class="cm-overview-grid">
+                        <div class="cm-card">
+                            <div class="cm-card-title">Chỉ số cơ bản</div>
+                            <div class="cm-stat-grid" id="cmOverviewStats">
+                                <!-- JS fill -->
+                            </div>
+                        </div>
+                        <div class="cm-card">
+                            <div class="cm-card-title">Cơ cấu cổ đông (Tóm tắt)</div>
+                            <div style="height: 200px; display: flex; justify-content: center; align-items: center;">
+                                <canvas id="cmShareholderChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cm-card">
+                        <div class="cm-card-title">Giới thiệu</div>
+                        <div class="cm-profile-text" id="cmProfileText"></div>
+                    </div>
+                </div>
+                
+                <div id="cmTab-shareholders" class="cm-tab-pane">
+                    <div class="cm-card">
+                        <table class="cm-table">
+                            <thead>
+                                <tr><th>Cổ đông</th><th>Vai trò</th><th>Loại</th><th style="text-align: right;">Số lượng CP</th><th style="text-align: right;">Tỷ lệ (%)</th></tr>
+                            </thead>
+                            <tbody id="cmShareholdersBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div id="cmTab-relationships" class="cm-tab-pane">
+                    <div class="cm-overview-grid">
+                        <div class="cm-card">
+                            <div class="cm-card-title">Công ty con</div>
+                            <table class="cm-table">
+                                <thead><tr><th>Tên công ty</th><th style="text-align: right;">Sở hữu (%)</th></tr></thead>
+                                <tbody id="cmSubsidiariesBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="cm-card">
+                            <div class="cm-card-title">Công ty liên kết</div>
+                            <table class="cm-table">
+                                <thead><tr><th>Tên công ty</th><th style="text-align: right;">Sở hữu (%)</th></tr></thead>
+                                <tbody id="cmAffiliatesBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="cmTab-events" class="cm-tab-pane">
+                    <div class="cm-card">
+                        <div class="cm-timeline" id="cmEventsTimeline"></div>
+                    </div>
+                </div>
+                
+                <div id="cmTab-news" class="cm-tab-pane">
+                    <div class="cm-news-list" id="cmNewsList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let cmChartInstance = null;
+        let cmCurrentSymbol = '';
+
+        console.log('Init Company Modal');
+        function openCompanyModal() {
+            console.log('openCompanyModal called');
+            cmCurrentSymbol = window.currentSymbol || 'FPT';
+            document.getElementById('cmModalTitle').innerText = `Thông tin Doanh nghiệp: ${cmCurrentSymbol}`;
+            document.getElementById('companyModal').classList.add('show');
+            switchCmTab('overview');
+            fetchCmData('overview');
+        }
+
+        function closeCompanyModal() {
+            document.getElementById('companyModal').classList.remove('show');
+        }
+
+        function switchCmTab(tabId) {
+            document.querySelectorAll('.cm-tab').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.cm-tab-pane').forEach(el => el.classList.remove('active'));
+            
+            const tabEl = Array.from(document.querySelectorAll('.cm-tab')).find(el => el.getAttribute('onclick').includes(tabId));
+            if(tabEl) tabEl.classList.add('active');
+            
+            document.getElementById('cmTab-' + tabId).classList.add('active');
+            fetchCmData(tabId);
+        }
+
+        async function fetchCmData(tabId) {
+            const loading = document.getElementById('cmLoading');
+            loading.style.display = 'flex';
+            
+            try {
+                if (tabId === 'overview') {
+                    const [resDetails, resStruct] = await Promise.all([
+                        fetch(`/api/company-details?symbol=${cmCurrentSymbol}`).then(r => r.json()),
+                        fetch(`/api/company-shareholder-structure?symbol=${cmCurrentSymbol}`).then(r => r.json())
+                    ]);
+                    
+                    // Tab Tổng quan: company details
+                    if (resDetails.successful && resDetails.data) {
+                        const d = resDetails.data;
+                        document.getElementById('cmProfileText').innerHTML = d.profile || 'Chưa có thông tin.';
+                        
+                        // Real fields from API: listingDate, sector (sectorVn), freeFloatPercentage, listing.charterCapital
+                        const listingInfo = d.listing || {};
+                        let listingDateStr = d.listingDate || listingInfo.listingDate || '-';
+                        if (listingDateStr !== '-' && listingDateStr.includes('T')) {
+                            listingDateStr = new Date(listingDateStr).toLocaleDateString('vi-VN');
+                        }
+                        
+                        const statsHtml = `
+                            <div class="cm-stat-item"><div class="cm-stat-label">Ngày niêm yết</div><div class="cm-stat-value">${listingDateStr}</div></div>
+                            <div class="cm-stat-item"><div class="cm-stat-label">Sàn giao dịch</div><div class="cm-stat-value">${listingInfo.comGroupCode || d.comGroupCode || '-'}</div></div>
+                            <div class="cm-stat-item"><div class="cm-stat-label">Vốn điều lệ (Tỷ)</div><div class="cm-stat-value">${listingInfo.charterCapital ? (listingInfo.charterCapital/1e9).toFixed(2) : '-'}</div></div>
+                            <div class="cm-stat-item"><div class="cm-stat-label">Lĩnh vực</div><div class="cm-stat-value">${d.sectorVn || d.sector || '-'}</div></div>
+                            <div class="cm-stat-item"><div class="cm-stat-label">Free Float</div><div class="cm-stat-value">${d.freeFloatPercentage != null ? (d.freeFloatPercentage * 100).toFixed(2) + '%' : '-'}</div></div>
+                            <div class="cm-stat-item"><div class="cm-stat-label">Vốn hóa (Tỷ)</div><div class="cm-stat-value">${d.marketCap ? (d.marketCap/1e9).toFixed(2) : '-'}</div></div>
+                            <div class="cm-stat-item"><div class="cm-stat-label">KL CP (Triệu)</div><div class="cm-stat-value">${d.numberOfSharesMktCap ? (d.numberOfSharesMktCap/1e6).toFixed(2) : '-'}</div></div>
+                            <div class="cm-stat-item"><div class="cm-stat-label">KLGD TB 1 tháng (Tỷ)</div><div class="cm-stat-value">${d.averageMatchValue1Month ? (d.averageMatchValue1Month/1e9).toFixed(2) : '-'}</div></div>
+                        `;
+                        document.getElementById('cmOverviewStats').innerHTML = statsHtml;
+                    }
+                    
+                    // Tab Tổng quan: shareholder structure - data is a DICT, not array
+                    if (resStruct.successful && resStruct.data) {
+                        const s = resStruct.data;
+                        const labels = [];
+                        const chartData = [];
+                        
+                        const structMap = [
+                            { label: 'Nhà nước', value: s.statePercentage },
+                            { label: 'Nước ngoài', value: s.foreignPercentage },
+                            { label: 'Ban lãnh đạo', value: s.bodPercentage },
+                            { label: 'Tổ chức', value: s.institutionPercentage },
+                            { label: 'Khác', value: s.otherPercentage }
+                        ];
+                        structMap.forEach(item => {
+                            if (item.value > 0) {
+                                labels.push(item.label + ` (${(item.value * 100).toFixed(1)}%)`);
+                                chartData.push(Math.round(item.value * 10000) / 100);
+                            }
+                        });
+                        
+                        const ctx = document.getElementById('cmShareholderChart').getContext('2d');
+                        if (cmChartInstance) cmChartInstance.destroy();
+                        cmChartInstance = new Chart(ctx, {
+                            type: 'doughnut',
+                            data: {
+                                labels: labels,
+                                datasets: [{ data: chartData, backgroundColor: ['#2962ff', '#4caf50', '#ff9800', '#e91e63'] }]
+                            },
+                            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: document.body.classList.contains('light-theme') ? '#333' : '#d1d4dc', font: { size: 13 } } } } }
+                        });
+                    }
+                } 
+                else if (tabId === 'shareholders') {
+                    const res = await fetch(`/api/company-shareholders?symbol=${cmCurrentSymbol}`);
+                    const json = await res.json();
+                    // data is an ARRAY. real fields: ownerName, positionName, ownerType, quantity, percentage
+                    if (json.successful && Array.isArray(json.data)) {
+                        const tbody = document.getElementById('cmShareholdersBody');
+                        tbody.innerHTML = '';
+                        json.data.forEach(h => {
+                            const isOrg = (h.ownerType === '1' || h.ownerType === 1 || h.ownerType === 'Tổ chức') ? 'blue' : 'green';
+                            const orgLabel = (h.ownerType === '1' || h.ownerType === 1) ? 'Tổ chức' : 'Cá nhân';
+                            tbody.innerHTML += `<tr>
+                                <td style="font-weight:600">${h.ownerName || '-'}</td>
+                                <td>${h.positionName || '-'}</td>
+                                <td><span class="cm-badge ${isOrg}">${orgLabel}</span></td>
+                                <td style="text-align:right; font-family:var(--font-mono)">${h.quantity ? h.quantity.toLocaleString() : '-'}</td>
+                                <td style="text-align:right; font-weight:bold">${h.percentage != null ? (h.percentage * 100).toFixed(2) + '%' : '-'}</td>
+                            </tr>`;
+                        });
+                    }
+                }
+                else if (tabId === 'relationships') {
+                    const res = await fetch(`/api/company-relationships?symbol=${cmCurrentSymbol}`);
+                    const json = await res.json();
+                    // data is a DICT: { subsidiaries: [...], affiliates: [...] }
+                    // real fields: rightOrganNameVi, ownedPercentage
+                    if (json.successful && json.data) {
+                        const d = json.data;
+                        const subBody = document.getElementById('cmSubsidiariesBody');
+                        const affBody = document.getElementById('cmAffiliatesBody');
+                        subBody.innerHTML = ''; affBody.innerHTML = '';
+                        
+                        const renderRow = (c) => {
+                            const pct = c.ownedPercentage != null ? c.ownedPercentage : 0;
+                            const badgeColor = pct >= 0.5 ? 'green' : 'orange';
+                            return `<tr>
+                                <td>${c.rightOrganNameVi || c.rightTicker || '-'}</td>
+                                <td style="text-align:right"><span class="cm-badge ${badgeColor}">${(pct * 100).toFixed(2)}%</span></td>
+                            </tr>`;
+                        };
+                        (d.subsidiaries || []).forEach(c => subBody.innerHTML += renderRow(c));
+                        (d.affiliates || []).forEach(c => affBody.innerHTML += renderRow(c));
+                    }
+                }
+                else if (tabId === 'events') {
+                    // Use CafeF LichSuKien endpoint (Vietcap events API returns null)
+                    const res = await fetch(`/api/company-events?symbol=${cmCurrentSymbol}`);
+                    const json = await res.json();
+                    const tl = document.getElementById('cmEventsTimeline');
+                    tl.innerHTML = '';
+                    const items = json.Data || json.data || [];
+                    if (Array.isArray(items) && items.length > 0) {
+                        const eventTypeLabels = { 1: 'Cổ tức', 2: 'Phát hành', 3: 'ĐHCĐ', 4: 'Khác' };
+                        items.forEach(e => {
+                            // Parse CafeF timestamp format: /Date(1782234000000)/
+                            let dateStr = '-';
+                            if (e.Time) {
+                                const ms = parseInt((e.Time || '').replace(/\/Date\((\d+)\)\//,'$1'));
+                                if (!isNaN(ms)) dateStr = new Date(ms).toLocaleDateString('vi-VN');
+                            }
+                            const typeLabel = eventTypeLabels[e.type] || 'Sự kiện';
+                            const texts = Array.isArray(e.Text) ? e.Text : [e.Text || ''];
+                            tl.innerHTML += `<div class="cm-event-card">
+                                <div class="cm-event-date">${dateStr}</div>
+                                <div class="cm-event-content">
+                                    <div class="cm-event-title">[${typeLabel}] ${texts[0] || ''}</div>
+                                    ${texts.slice(1).map(t => `<div style="font-size:13px; color:var(--text-secondary)">${t}</div>`).join('')}
+                                </div>
+                            </div>`;
+                        });
+                    } else {
+                        tl.innerHTML = '<div style="padding:20px; color:var(--text-secondary); text-align:center;">Chưa có sự kiện nào.</div>';
+                    }
+                }
+                else if (tabId === 'news') {
+                    // Use CafeF News.ashx endpoint
+                    const res = await fetch(`/api/company-news?symbol=${cmCurrentSymbol}`);
+                    const json = await res.json();
+                    const nl = document.getElementById('cmNewsList');
+                    nl.innerHTML = '';
+                    const items = json.Data || json.data || [];
+                    if (Array.isArray(items) && items.length > 0) {
+                        items.forEach(n => {
+                            const imgUrl = n.Avatar || n.Thumbnail || n.ImageUrl || '';
+                            const title = n.Title || n.Name || n.NewsTitle || '';
+                            const date = n.PublishDate || n.CreatedDate || n.Date || '';
+                            const link = n.Url || n.Link || 'https://cafef.vn';
+                            nl.innerHTML += `<a href="${link}" target="_blank" class="cm-news-item">
+                                ${imgUrl ? `<img class="cm-news-img" src="${imgUrl}" alt="News" onerror="this.style.display='none'">` : ''}
+                                <div class="cm-news-content">
+                                    <h3 class="cm-news-title">${title}</h3>
+                                    <div class="cm-news-date">${date}</div>
+                                </div>
+                            </a>`;
+                        });
+                    } else {
+                        nl.innerHTML = '<div style="padding:20px; color:var(--text-secondary); text-align:center;">Chưa có tin tức nào.</div>';
+                    }
+                }
+            } catch (e) {
+                console.error("Error fetching company data:", e);
+            }
+            loading.style.display = 'none';
+        }
     </script>
     <script src="fundamental.js?v=17"></script>
     <script src="https://khoanguyeninvest.vn/dashboard_data.js" async></script>

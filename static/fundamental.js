@@ -456,9 +456,6 @@ function renderFundamental() {
                 <thead><tr id="fdTableHead"></tr></thead>
                 <tbody id="fdTableBody"></tbody>
             </table>
-            <div style="padding: 10px; font-size: 12px; color: var(--fd-text-dim);">
-                Ô "--" là quý nguồn chưa công bố. Xu hướng LN so sánh %YoY LN kỳ này vs kỳ trước.
-            </div>
         </div>
     `;
     
@@ -564,7 +561,7 @@ function renderCharts(data, ratesInfo) {
         }
     };
 
-    // 1. Tăng trưởng YoY (Hai Cột)
+    // 1. Tăng trưởng YoY (Grouped Bar)
     const ctx1 = document.getElementById('chart1').getContext('2d');
     f_charts['chart1'] = new Chart(ctx1, {
         type: 'bar',
@@ -574,21 +571,23 @@ function renderCharts(data, ratesInfo) {
                 { 
                     label: '%YoY Doanh thu', 
                     data: displayData.map(d => d.revYoY * 100), 
-                    backgroundColor: displayData.map(d => d.revYoY >= 0 ? '#8fb0fb' : '#2962ff'),
-                    borderRadius: 4
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 4,
+                    order: 1
                 },
                 { 
                     label: '%YoY Lợi nhuận', 
                     data: displayData.map(d => d.profitYoY * 100), 
-                    backgroundColor: displayData.map(d => d.profitYoY >= 0 ? '#85d199' : '#16a34a'),
-                    borderRadius: 4
+                    backgroundColor: displayData.map(d => d.profitYoY >= 0 ? '#10b981' : '#ef4444'),
+                    borderRadius: 4,
+                    order: 2
                 }
             ]
         },
         options: commonOptions
     });
 
-    // 2. Quy mô DT & LNST (Cột) + Tăng trưởng LNST (Đường)
+    // 2. Quy mô DT & LNST (Grouped Bar) + Tăng trưởng LNST (Line trục Y phụ)
     const ctx2 = document.getElementById('chart2').getContext('2d');
     f_charts['chart2'] = new Chart(ctx2, {
         type: 'bar',
@@ -598,26 +597,28 @@ function renderCharts(data, ratesInfo) {
                 { 
                     label: 'Doanh thu (tỷ)', 
                     data: displayData.map(d => d.revenue / 1e9), 
-                    backgroundColor: '#d66058', 
-                    order: 2,
+                    backgroundColor: '#60a5fa', 
+                    borderRadius: 4,
+                    order: 1,
                     yAxisID: 'y'
                 },
                 { 
-                    label: 'Lợi nhuận (tỷ)', 
+                    label: 'LNST (tỷ)', 
                     data: displayData.map(d => d.profit / 1e9), 
-                    backgroundColor: '#6b8e8e', 
-                    order: 2,
+                    backgroundColor: '#10b981', 
+                    borderRadius: 4,
+                    order: 1,
                     yAxisID: 'y'
                 },
                 { 
                     label: 'Tăng trưởng LNST (%)', 
                     data: displayData.map(d => d.profitYoY * 100), 
                     type: 'line', 
-                    borderColor: '#ffee00', 
-                    backgroundColor: '#ffee00',
+                    borderColor: '#f59e0b', 
+                    backgroundColor: '#f59e0b',
                     borderWidth: 2, 
                     pointRadius: 4,
-                    order: 1,
+                    order: 0,
                     yAxisID: 'y1'
                 }
             ]
@@ -627,48 +628,50 @@ function renderCharts(data, ratesInfo) {
             scales: {
                 x: commonOptions.scales.x,
                 y: { type: 'linear', display: true, position: 'left', ticks: { color: textColor }, grid: { color: gridColor } },
-                y1: { type: 'linear', display: true, position: 'right', ticks: { color: '#ffee00' }, grid: { drawOnChartArea: false } }
+                y1: { type: 'linear', display: true, position: 'right', ticks: { color: '#f59e0b' }, grid: { drawOnChartArea: false } }
             }
         }
     });
 
-    // 3. ROE
-    const avgRoe = displayData.reduce((a,b)=>a+b.roe,0)/displayData.length * 100;
+    // 3. ROE (Area + Ngưỡng)
     const ctx3 = document.getElementById('chart3').getContext('2d');
     f_charts['chart3'] = new Chart(ctx3, {
         type: 'line',
         data: {
             labels,
             datasets: [
-                { label: 'ROE (%)', data: displayData.map(d => d.roe * 100), borderColor: '#00bcd4', backgroundColor: 'rgba(0,188,212,0.1)', fill: true, tension: 0.3 },
-                { label: 'ROE TB', data: Array(labels.length).fill(avgRoe), borderColor: '#9e9e9e', borderDash: [5,5], pointRadius: 0 }
+                { label: 'ROE (%)', data: displayData.map(d => d.roe * 100), borderColor: '#0ea5e9', backgroundColor: 'rgba(14,165,233,0.2)', fill: true, tension: 0.3, borderWidth: 2, order: 2 },
+                { label: 'Tốt (>15%)', data: Array(labels.length).fill(15), borderColor: '#ffffff', borderDash: [5,5], pointRadius: 0, borderWidth: 1, order: 1 },
+                { label: 'Xuất sắc (>20%)', data: Array(labels.length).fill(20), borderColor: '#22d3ee', borderDash: [5,5], pointRadius: 0, borderWidth: 1, order: 0 }
             ]
         },
         options: commonOptions
     });
 
-    // 4. P/E & P/B
+    // 4. P/E & P/B (Line + Fill)
+    const avgPE = displayData.reduce((a,b)=>a+b.pe,0)/displayData.length;
     const ctx4 = document.getElementById('chart4').getContext('2d');
     f_charts['chart4'] = new Chart(ctx4, {
         type: 'line',
         data: {
             labels,
             datasets: [
-                { label: 'P/E', data: displayData.map(d => d.pe), borderColor: '#9c27b0', yAxisID: 'y' },
-                { label: 'P/B', data: displayData.map(d => d.pb), borderColor: '#e91e63', yAxisID: 'y1' }
+                { label: 'P/E', data: displayData.map(d => d.pe), borderColor: '#8b5cf6', backgroundColor: 'rgba(139,92,246,0.1)', fill: true, yAxisID: 'y', tension: 0.3, borderWidth: 2 },
+                { label: 'P/E TB', data: Array(labels.length).fill(avgPE), borderColor: '#6b7280', borderDash: [5,5], pointRadius: 0, yAxisID: 'y', borderWidth: 1 },
+                { label: 'P/B', data: displayData.map(d => d.pb), borderColor: '#ec4899', yAxisID: 'y1', tension: 0.3, borderWidth: 2 }
             ]
         },
         options: {
             ...commonOptions,
             scales: {
                 x: commonOptions.scales.x,
-                y: { type: 'linear', display: true, position: 'left', ticks: { color: '#9c27b0' }, grid: { color: gridColor } },
-                y1: { type: 'linear', display: true, position: 'right', ticks: { color: '#e91e63' }, grid: { drawOnChartArea: false } }
+                y: { type: 'linear', display: true, position: 'left', ticks: { color: '#8b5cf6' }, grid: { color: gridColor } },
+                y1: { type: 'linear', display: false, position: 'right', min: 0 }
             }
         }
     });
 
-    // 5. EPS & Tăng trưởng EPS
+    // 5. EPS & Tăng trưởng EPS (Waterfall-style Bar + Line trục Y phụ)
     const ctx5 = document.getElementById('chart5').getContext('2d');
     f_charts['chart5'] = new Chart(ctx5, {
         type: 'bar',
@@ -678,21 +681,23 @@ function renderCharts(data, ratesInfo) {
                 { 
                     label: 'EPS (VNĐ)', 
                     data: displayData.map(d => d.eps), 
-                    backgroundColor: '#3f51b5', 
-                    yAxisID: 'y',
-                    order: 2,
-                    barPercentage: 0.6
+                    backgroundColor: displayData.map(d => d.epsYoY >= 0 ? '#10b981' : '#ef4444'), 
+                    borderRadius: 4,
+                    order: 3,
+                    yAxisID: 'y'
                 },
+                { label: 'Tốt (>2000đ)', data: Array(labels.length).fill(2000), type: 'line', borderColor: '#ffffff', borderDash: [5,5], pointRadius: 0, borderWidth: 1, order: 2, yAxisID: 'y' },
+                { label: 'Xuất sắc (>4000đ)', data: Array(labels.length).fill(4000), type: 'line', borderColor: '#22d3ee', borderDash: [5,5], pointRadius: 0, borderWidth: 1, order: 1, yAxisID: 'y' },
                 { 
                     label: '%YoY EPS', 
                     data: displayData.map(d => d.epsYoY * 100), 
                     type: 'line', 
-                    borderColor: '#ffee00', 
-                    backgroundColor: '#ffee00',
+                    borderColor: '#3b82f6', 
+                    backgroundColor: '#3b82f6',
                     borderWidth: 2,
                     pointRadius: 4,
                     yAxisID: 'y1',
-                    order: 1
+                    order: 0
                 }
             ]
         },
@@ -700,13 +705,13 @@ function renderCharts(data, ratesInfo) {
             ...commonOptions,
             scales: {
                 x: commonOptions.scales.x,
-                y: { type: 'linear', display: true, position: 'left', ticks: { color: '#3f51b5' }, grid: { color: gridColor } },
-                y1: { type: 'linear', display: true, position: 'right', ticks: { color: '#ffee00' }, grid: { drawOnChartArea: false } }
+                y: { type: 'linear', display: true, position: 'left', ticks: { color: textColor }, grid: { color: gridColor } },
+                y1: { type: 'linear', display: true, position: 'right', ticks: { color: '#3b82f6' }, grid: { drawOnChartArea: false } }
             }
         }
     });
 
-    // 6. E/P vs Lãi suất
+    // 6. E/P vs Lãi suất (Area + LS Ref lines)
     const epData = displayData.map(d => d.pe > 0 ? (1 / d.pe) * 100 : 0);
     const ctx6 = document.getElementById('chart6').getContext('2d');
     f_charts['chart6'] = new Chart(ctx6, {
@@ -714,11 +719,10 @@ function renderCharts(data, ratesInfo) {
         data: {
             labels,
             datasets: [
-                { label: 'E/P (%)', data: epData, borderColor: '#2563EB', backgroundColor: 'rgba(37,99,235,0.1)', fill: true, borderWidth: 3 },
-                { label: 'VCB 12T', data: Array(labels.length).fill(ratesInfo.vcb), borderColor: '#16A34A', pointRadius: 0 },
-                { label: 'TCB 12T', data: Array(labels.length).fill(ratesInfo.tcb), borderColor: '#D97706', pointRadius: 0 },
-                { label: 'Lãi suất Max', data: Array(labels.length).fill(ratesInfo.maxRate), borderColor: '#DC2626', borderDash: [5, 5], pointRadius: 0 },
-                { label: 'Lãi suất TB', data: Array(labels.length).fill(ratesInfo.avgRate), borderColor: '#7C3AED', borderDash: [5, 5], pointRadius: 0 }
+                { label: 'E/P (%)', data: epData, borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.2)', fill: true, borderWidth: 2, tension: 0.3 },
+                { label: 'VCB 12T', data: Array(labels.length).fill(ratesInfo.vcb), borderColor: '#3b82f6', borderDash: [5, 5], pointRadius: 0, borderWidth: 1 },
+                { label: 'Lãi suất Max', data: Array(labels.length).fill(ratesInfo.maxRate), borderColor: '#ef4444', borderDash: [5, 5], pointRadius: 0, borderWidth: 1 },
+                { label: 'Lãi suất TB', data: Array(labels.length).fill(ratesInfo.avgRate), borderColor: '#a855f7', borderDash: [5, 5], pointRadius: 0, borderWidth: 1 }
             ]
         },
         options: commonOptions
@@ -740,31 +744,79 @@ function renderTable(data) {
     });
     head.innerHTML = hHTML;
     
+    const maxRev = Math.max(...displayData.map(d => Math.abs(d.revenue)));
+    const maxProfit = Math.max(...displayData.map(d => Math.abs(d.profit)));
+
     const rows = [
-        { label: 'Quy mô', isGroup: true },
-        { label: 'DT (tỷ)', fn: d => (d.revenue/1e9).toFixed(1) },
-        { label: 'LNST (tỷ)', fn: d => (d.profit/1e9).toFixed(1) },
-        { label: 'Tăng trưởng', isGroup: true },
-        { label: '%YoY DT', fn: d => `<span class="${d.revYoY>=0?'val-pos':'val-neg'}">${d.revYoY>0?'+':''}${formatPct(d.revYoY)}</span>` },
-        { label: '%YoY LN', fn: d => `<span class="${d.profitYoY>=0?'val-pos':'val-neg'}">${d.profitYoY>0?'+':''}${formatPct(d.profitYoY)}</span>` },
+        { label: '📦 QUY MÔ', isGroup: true },
+        { label: 'DT (tỷ)', fn: (d) => {
+            const val = d.revenue / 1e9;
+            const intensity = maxRev > 0 ? Math.abs(d.revenue) / maxRev : 0;
+            const bg = `rgba(59, 130, 246, ${intensity * 0.3})`;
+            return `<div style="background: ${bg}; padding: 4px 8px; border-radius: 4px;">${val.toFixed(1)}</div>`;
+        }},
+        { label: 'LNST (tỷ)', fn: (d) => {
+            const val = d.profit / 1e9;
+            const intensity = maxProfit > 0 ? Math.abs(d.profit) / maxProfit : 0;
+            const bg = `rgba(16, 185, 129, ${intensity * 0.3})`;
+            return `<div style="background: ${bg}; padding: 4px 8px; border-radius: 4px;">${val.toFixed(1)}</div>`;
+        }},
+        { label: '📈 TĂNG TRƯỞNG', isGroup: true },
+        { label: '%YoY DT', fn: (d) => {
+            const intensity = Math.min(Math.abs(d.revYoY), 1);
+            const color = d.revYoY >= 0 ? `rgba(16, 185, 129, ${0.05 + intensity * 0.3})` : `rgba(239, 68, 68, ${0.05 + intensity * 0.3})`;
+            return `<div style="background: ${color}; padding: 4px 8px; border-radius: 4px;" class="${d.revYoY>=0?'val-pos':'val-neg'}">${d.revYoY>0?'+':''}${formatPct(d.revYoY)}</div>`;
+        }},
+        { label: '%YoY LN', fn: (d) => {
+            const intensity = Math.min(Math.abs(d.profitYoY), 1);
+            const color = d.profitYoY >= 0 ? `rgba(16, 185, 129, ${0.05 + intensity * 0.3})` : `rgba(239, 68, 68, ${0.05 + intensity * 0.3})`;
+            return `<div style="background: ${color}; padding: 4px 8px; border-radius: 4px;" class="${d.profitYoY>=0?'val-pos':'val-neg'}">${d.profitYoY>0?'+':''}${formatPct(d.profitYoY)}</div>`;
+        }},
         { label: 'Xu hướng LN', fn: d => {
             if (d.profitYoY > 0) return `<span class="fd-chip up">Tăng tốc ▲</span>`;
             if (d.profitYoY < 0) return `<span class="fd-chip down">Giảm tốc ▼</span>`;
             return '--';
         }},
-        { label: 'Hiệu quả', isGroup: true },
-        { label: 'ROE (%)', fn: d => `<span class="${d.roe>=0?'val-pos':'val-neg'}">${d.roe>0?'+':''}${formatPct(d.roe)}</span>` },
-        { label: 'EPS (đồng)', fn: d => d.eps.toFixed(0) },
-        { label: '%YoY EPS', fn: d => `<span class="${d.epsYoY>=0?'val-pos':'val-neg'}">${d.epsYoY>0?'+':''}${formatPct(d.epsYoY)}</span>` },
-        { label: 'Định giá', isGroup: true },
-        { label: 'P/E', fn: d => d.pe.toFixed(2) },
-        { label: 'P/B', fn: d => d.pb.toFixed(2) }
+        { label: '⚡ HIỆU QUẢ', isGroup: true },
+        { label: 'ROE (%)', fn: (d) => {
+            let bg = 'transparent';
+            if (d.roe >= 0.2) bg = 'rgba(16, 185, 129, 0.25)'; // >20%
+            else if (d.roe >= 0.15) bg = 'rgba(16, 185, 129, 0.12)'; // 15-20%
+            else if (d.roe >= 0.1) bg = 'rgba(245, 158, 11, 0.15)'; // 10-15%
+            else bg = 'rgba(239, 68, 68, 0.15)'; // <10%
+            return `<div style="background: ${bg}; padding: 4px 8px; border-radius: 4px;" class="${d.roe>=0?'val-pos':'val-neg'}">${d.roe>0?'+':''}${formatPct(d.roe)}</div>`;
+        }},
+        { label: 'EPS (đồng)', fn: (d) => {
+            let bg = 'transparent';
+            if (d.eps > 4000) bg = 'rgba(16, 185, 129, 0.2)';
+            else if (d.eps > 2000) bg = 'rgba(245, 158, 11, 0.15)';
+            else bg = 'rgba(239, 68, 68, 0.15)';
+            return `<div style="background: ${bg}; padding: 4px 8px; border-radius: 4px;">${d.eps.toFixed(0)}</div>`;
+        }},
+        { label: '%YoY EPS', fn: (d) => {
+            const intensity = Math.min(Math.abs(d.epsYoY), 1);
+            const color = d.epsYoY >= 0 ? `rgba(16, 185, 129, ${0.05 + intensity * 0.3})` : `rgba(239, 68, 68, ${0.05 + intensity * 0.3})`;
+            return `<div style="background: ${color}; padding: 4px 8px; border-radius: 4px;" class="${d.epsYoY>=0?'val-pos':'val-neg'}">${d.epsYoY>0?'+':''}${formatPct(d.epsYoY)}</div>`;
+        }},
+        { label: '🏷️ ĐỊNH GIÁ', isGroup: true },
+        { label: 'P/E', fn: (d) => {
+            let bg = 'transparent';
+            if (d.pe > 0 && d.pe < 10) bg = 'rgba(16, 185, 129, 0.2)';
+            else if (d.pe > 20 || d.pe < 0) bg = 'rgba(239, 68, 68, 0.2)';
+            return `<div style="background: ${bg}; padding: 4px 8px; border-radius: 4px;">${d.pe.toFixed(2)}</div>`;
+        }},
+        { label: 'P/B', fn: (d) => {
+            let bg = 'transparent';
+            if (d.pb > 0 && d.pb < 1.5) bg = 'rgba(16, 185, 129, 0.2)';
+            else if (d.pb > 3 || d.pb < 0) bg = 'rgba(239, 68, 68, 0.2)';
+            return `<div style="background: ${bg}; padding: 4px 8px; border-radius: 4px;">${d.pb.toFixed(2)}</div>`;
+        }}
     ];
     
     let bHTML = '';
     rows.forEach(r => {
         if (r.isGroup) {
-            bHTML += `<tr class="fd-row-group"><td colspan="${displayData.length + 1}" style="padding: 8px 12px; font-weight: bold; color: var(--fd-accent); border-bottom: 1px solid var(--fd-border);">${r.label}</td></tr>`;
+            bHTML += `<tr class="fd-row-group"><td colspan="${displayData.length + 1}" style="padding: 10px 12px; font-weight: bold; color: var(--fd-accent);">${r.label}</td></tr>`;
         } else {
             bHTML += `<tr><td>${r.label}</td>`;
             displayData.forEach((d, idx) => { 
