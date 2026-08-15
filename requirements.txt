@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+vnstock
+pandas
+openpyxl
+numpy
+requests
+ssi-fc-data
