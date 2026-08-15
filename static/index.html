@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biểu Đồ Nến Nâng Cao</title>
+    <title>KlineChart</title>
     <link rel="icon" href="data:,">
     <script>
         window.addEventListener('error', function(event) {
@@ -25,7 +25,45 @@
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
     <!-- Nhúng thư viện Chart.js cho Đánh giá Cơ bản -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-deep: hsl(226, 20%, 9%);
+            --bg-surface: hsl(226, 18%, 13%);
+            --bg-elevated: hsl(226, 16%, 17%);
+            --bg-hover: hsl(226, 14%, 20%);
+            --border-subtle: hsl(226, 12%, 22%);
+            --border-strong: hsl(226, 12%, 30%);
+            --text-primary: hsl(220, 14%, 88%);
+            --text-secondary: hsl(220, 8%, 58%);
+            --text-dim: hsl(220, 8%, 38%);
+            --accent-blue: hsl(217, 100%, 62%);
+            --accent-green: hsl(152, 60%, 45%);
+            --accent-red: hsl(354, 75%, 58%);
+            --accent-amber: hsl(38, 95%, 55%);
+            --accent-purple: hsl(262, 68%, 65%);
+            
+            /* Typography variables */
+            --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-xs: 11px;
+            --font-sm: 12px;
+            --font-md: 13px;
+            --font-lg: 15px;
+            --font-xl: 20px;
+            --font-2xl: 28px;
+        }
+        
+        body, html { 
+            margin: 0; padding: 0; height: 100%; 
+            background-color: var(--bg-deep); /* Dark background */
+            color: var(--text-primary); 
+            font-family: var(--font-main);
+            overflow: hidden;
+            letter-spacing: -0.01em;
+        }
         .tv-resolution-select {
             background: transparent;
             color: #d1d4dc;
@@ -63,12 +101,7 @@
             border: 1px solid rgba(255,255,255,0.1);
             transition: opacity 0.2s;
         }
-        body, html { 
-            margin: 0; padding: 0; height: 100%; 
-            background-color: #161a25; /* Dark background */
-            color: #d1d4dc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            overflow: hidden;
-        }
+
         #chart-wrapper { 
             position: relative; width: 100%; height: 100%; overflow: hidden; flex: 1;
         }
@@ -76,17 +109,26 @@
             width: 100%; flex: 1; min-height: 0;
         }
         .toolbar { 
-            height: 60px; padding: 0 20px; background: #1e222d; 
-            display: flex; gap: 10px; align-items: center; 
-            border-bottom: 1px solid #2a2e39;
+            height: 60px; padding: 0 16px; 
+            background-color: var(--bg-surface); 
+            background-image: linear-gradient(to bottom, rgba(255,255,255,0.02), transparent);
+            display: flex; gap: 12px; align-items: center; 
+            border-bottom: 1px solid var(--border-subtle);
             box-sizing: border-box;
             white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
         .toolbar::-webkit-scrollbar { height: 4px; }
-        .toolbar::-webkit-scrollbar-thumb { background: #434651; border-radius: 2px; }
-        .search-box {
-            position: relative;
-            margin-right: 20px;
+        .toolbar::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
+        
+        .brand-logo {
+            display: flex; align-items: center; gap: 8px;
+            font-weight: 700; font-size: 18px; color: var(--text-primary);
+            padding-right: 16px; border-right: 1px solid var(--border-subtle);
+            user-select: none;
+        }
+        .brand-logo svg {
+            width: 24px; height: 24px;
         }
         .search-trigger {
             display: inline-flex; align-items: center;
@@ -104,23 +146,34 @@
         }
         
         .indicator-btn { 
-            padding: 6px 12px; background: #2a2e39; color: #a3a6af; 
-            border: 1px solid #363c4e; border-radius: 4px; cursor: pointer; 
+            padding: 6px 14px; background: var(--bg-elevated); color: var(--text-secondary); 
+            border: 1px solid var(--border-strong); border-radius: 20px; cursor: pointer; 
             outline: none; font-size: 13px; font-weight: 500;
             transition: all 0.2s;
             white-space: nowrap;
             flex-shrink: 0;
+            display: flex; align-items: center; gap: 6px;
         }
-        .indicator-btn:hover { background: #363c4e; color: #d1d4dc; }
+        .indicator-btn:hover { background: var(--bg-hover); color: var(--text-primary); transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         .indicator-btn.active { 
             background: rgba(41, 98, 255, 0.15); 
-            color: #2962ff; 
+            color: var(--accent-blue);
+            border-color: rgba(41, 98, 255, 0.3);
         }
         
         .loading {
-            position: absolute; top: 60px; left: 0; right: 0;
-            background: #2962ff; color: white; text-align: center;
-            font-size: 12px; padding: 4px; display: none; z-index: 9999;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            display: none; z-index: 9999;
+            width: 40px; height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            border-top-color: #2962ff;
+            animation: kc-spin 1s ease-in-out infinite;
+        }
+        @keyframes kc-spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+        body.light-theme .loading {
+            border: 3px solid rgba(0,0,0,0.1);
+            border-top-color: #2962ff;
         }
         
         .chart-watermark {
@@ -249,11 +302,11 @@
         
         /* Performance Banner Styles */
         .bottom-bar {
-            display: flex;
-            align-items: center;
-            background: var(--bg-color, #1e222d);
-            border-top: 1px solid var(--border-color, #2a2e39);
+            display: flex; align-items: center;
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border-subtle);
             flex-shrink: 0;
+            padding: 0 10px;
         }
         .performance-banner {
             display: flex;
@@ -263,7 +316,8 @@
         .bottom-bar-divider {
             width: 1px;
             height: 30px;
-            border-right: 1px dashed var(--border-color, #4a4e59);
+            background: linear-gradient(to bottom, transparent, var(--border-strong), transparent);
+            border: none;
             margin: 0 15px;
         }
         .bottom-indicators {
@@ -422,26 +476,31 @@
         .mb-label { display: inline-block; padding: 2px 4px; border-radius: 2px; font-size: 10px; margin-left: 4px; }
         
         .perf-cell {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border-right: 1px solid var(--border-color, #2a2e39);
-            padding: 0 15px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 4px 12px; margin: 4px; border-radius: 4px;
+            background: rgba(255,255,255,0.02);
+            border-left: 3px solid transparent;
+            min-width: 60px;
         }
-        .perf-cell:last-child { border-right: none; }
+        .perf-cell:has(.perf-up) {
+            background: rgba(8, 153, 129, 0.08);
+            border-left-color: var(--accent-green);
+        }
+        .perf-cell:has(.perf-down) {
+            background: rgba(242, 54, 69, 0.08);
+            border-left-color: var(--accent-red);
+        }
         .perf-label {
-            font-size: 11px;
-            color: #787b86;
-            font-weight: 600;
-            margin-bottom: 2px;
+            font-size: 11px; color: var(--text-secondary); font-weight: 600; margin-bottom: 2px;
+            text-transform: uppercase;
         }
         
         /* Symbol Info Sidebar Styles */
         .symbol-info-sidebar {
             width: 100%;
-            background: var(--bg-color, #1e222d);
-            border-left: 1px solid var(--border-color, #2a2e39);
+            background-color: var(--bg-surface);
+            background-image: linear-gradient(to bottom, rgba(255,255,255,0.015), transparent);
+            border-left: 1px solid var(--border-subtle);
             display: flex;
             flex-direction: column;
             color: var(--text-color, #d1d4dc);
@@ -449,78 +508,90 @@
         }
         .sis-header { display: flex; align-items: center; padding: 20px 20px 10px 20px; gap: 12px; }
         .sis-logo {
-            width: 48px; height: 48px; border-radius: 50%;
-            background: #2a2e39; color: #d1d4dc; border: 1px solid #363c4e;
+            width: 52px; height: 52px; border-radius: 50%;
+            background: var(--bg-elevated); color: var(--text-primary); border: 1px solid var(--border-strong);
             display: flex; align-items: center; justify-content: center;
             font-weight: bold; font-size: 16px;
             overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: all 0.3s;
         }
+        .sis-logo:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(41, 98, 255, 0.4); border-color: var(--accent-blue); }
         .sis-logo img {
             width: 100%; height: 100%; object-fit: contain; background: #fff;
         }
         body.light-theme .sis-logo { background: #fff; color: #0f172a; border: 1px solid #e2e8f0; }
         .sis-title-group { display: flex; flex-direction: column; }
         .sis-symbol-row { display: flex; align-items: baseline; gap: 8px; }
-        .sis-symbol { font-size: 24px; font-weight: 800; color: var(--text-color, #d1d4dc); }
+        .sis-symbol { font-size: 26px; font-weight: 800; color: var(--text-primary); letter-spacing: 0.5px; }
         body.light-theme .sis-symbol { color: #0f172a; }
-        .sis-exchange { font-size: 12px; color: #787b86; font-weight: bold; }
-        .sis-name { font-size: 13px; color: #787b86; margin-top: 2px; }
+        .sis-exchange { font-size: 11px; color: var(--text-primary); font-weight: bold; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; }
+        .sis-name { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
         .sis-price-row { display: flex; justify-content: space-between; align-items: center; padding: 0 20px 15px 20px; }
-        .sis-price-left { display: flex; align-items: baseline; gap: 8px; }
-        .sis-current-price { font-size: 32px; font-weight: 800; }
-        .sis-change { font-size: 16px; font-weight: 600; }
+        .sis-price-left { display: flex; align-items: baseline; gap: 10px; }
+        .sis-current-price { font-size: 34px; font-weight: 800; font-family: var(--font-mono); }
+        .sis-change { font-size: 16px; font-weight: 600; font-family: var(--font-mono); display: flex; align-items: center; gap: 4px; }
         .sis-price-right { display: flex; align-items: baseline; gap: 4px; font-size: 14px; font-weight: bold; }
-        .sis-volume-label { color: #787b86; }
-        .sis-volume { color: var(--text-color, #d1d4dc); }
+        .sis-volume-label { color: var(--text-secondary); }
+        .sis-volume { color: var(--text-primary); font-family: var(--font-mono); }
         body.light-theme .sis-volume { color: #334155; }
-        .sis-tabs { display: flex; padding: 0 20px; border-bottom: 1px solid var(--border-color, #2a2e39); gap: 20px; }
-        .sis-tab { padding: 10px 0; font-weight: 600; font-size: 14px; color: #787b86; cursor: pointer; border-bottom: 2px solid transparent; }
-        .sis-tab.active { color: #00a65a; border-bottom-color: #00a65a; }
+        .sis-tabs { display: flex; padding: 0 20px; border-bottom: 1px solid var(--border-subtle); gap: 20px; }
+        .sis-tab { padding: 10px 0; font-weight: 600; font-size: 14px; color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
+        .sis-tab:hover { color: var(--text-primary); }
+        .sis-tab.active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); }
         .sis-tab-content { display: none; padding: 20px; }
         .sis-tab-content.active { display: block; }
         .sis-section-title { font-weight: bold; font-size: 16px; margin-bottom: 15px; color: var(--text-color, #d1d4dc); }
         body.light-theme .sis-section-title { color: #0f172a; }
         .sis-table { width: 100%; border-collapse: collapse; }
-        .sis-table td { padding: 12px 0; border-bottom: 1px solid var(--border-color, #2a2e39); font-size: 14px; color: #a1a1aa; }
+        .sis-table td { padding: 12px 0; border-bottom: 1px solid var(--border-subtle); font-size: 14px; color: var(--text-secondary); transition: background 0.2s; }
+        .sis-table tr:hover td { background: rgba(255,255,255,0.02); }
         body.light-theme .sis-table td { border-bottom: 1px solid #f1f5f9; color: #64748b; }
-        .sis-table tr td:last-child { text-align: right; font-weight: bold; color: var(--text-color, #d1d4dc); }
+        body.light-theme .sis-table tr:hover td { background: rgba(0,0,0,0.02); }
+        .sis-table tr td:last-child { text-align: right; font-weight: bold; color: var(--text-primary); font-family: var(--font-mono); }
         body.light-theme .sis-table tr td:last-child { color: #0f172a; }
         .sis-table tr:last-child td { border-bottom: none; }
         
+        .rs-bar-container { width: 80px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; display: inline-block; margin-right: 10px; vertical-align: middle; position: relative; overflow: hidden; }
+        .rs-bar-fill { height: 100%; width: 0%; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); background: var(--accent-blue); }
+        body.light-theme .rs-bar-container { background: rgba(0,0,0,0.1); }
+        
         .perf-value {
-            font-size: 14px;
-            font-weight: bold;
+            font-size: 14px; font-weight: 700; font-family: var(--font-mono);
         }
-        .perf-up { color: #089981; }
-        .perf-down { color: #f23645; }
+        .perf-up { color: var(--accent-green); }
+        .perf-down { color: var(--accent-red); }
         
         body.light-theme .perf-cell { }
         body.light-theme .perf-label { color: #131722; }
         
         /* Symbol Info Block */
         .symbol-info-block {
-            display: flex;
-            align-items: center;
-            gap: 20px;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-strong);
             cursor: pointer;
-            padding: 4px 12px;
-            border-radius: 6px;
-            transition: background 0.2s;
-            margin-right: 15px;
+            padding: 6px 16px;
+            border-radius: 20px;
+            transition: all 0.2s;
+            min-width: 120px;
         }
-        .symbol-info-block:hover { background: #2a2e39; }
-        .sib-left { display: flex; flex-direction: column; justify-content: center; }
-        .sib-name { font-size: 14px; font-weight: bold; color: #d1d4dc; margin-bottom: 2px; }
-        .sib-symbol-row { display: flex; align-items: center; gap: 4px; font-size: 13px; color: #2962ff; }
-        .sib-icon { color: #f23645; font-size: 12px; }
-        .sib-edit { color: #787b86; font-size: 12px; margin-left: 4px; }
+        .symbol-info-block:hover { background: var(--bg-hover); border-color: var(--accent-blue); box-shadow: 0 0 0 1px var(--accent-blue); transform: translateY(-1px); }
         
-        .sib-right { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; }
-        .sib-price { font-size: 14px; font-weight: bold; color: #d1d4dc; margin-bottom: 2px; }
-        .sib-change { font-size: 13px; font-weight: bold; }
-        .sib-change.up { color: #089981; }
-        .sib-change.down { color: #f23645; }
-        .sib-change.unchanged { color: #FF9800; }
+        .sib-left { display: flex; align-items: center; }
+        .sib-name { display: none; } /* Hide full name in toolbar */
+        .sib-right { display: none; } /* Hide price/change in toolbar */
+        
+        .sib-symbol-row { display: flex; align-items: center; gap: 8px; }
+        .sib-icon { display: none; } /* Hide old icon */
+        
+        .sib-symbol { font-size: 16px; font-weight: 800; color: var(--text-primary); letter-spacing: 0.5px; }
+        .sib-symbol::before {
+            content: '🔍';
+            margin-right: 8px;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        .sib-edit { display: none; }
         
         body.light-theme .symbol-info-block:hover { background: #f0f3fa; }
         body.light-theme .sib-name, body.light-theme .sib-price { color: #131722; }
@@ -739,25 +810,25 @@
     z-index: 9999;
     border-radius: 4px;
     border: 1px solid #2a2e39;
-    top: 100%;
+    bottom: 100%;
     left: 0;
     padding: 5px 0;
-    margin-top: 5px;
+    margin-bottom: 5px;
 }
 .drawing-dropdown-content.show {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
 }
 .drawing-dropdown-content button {
     background: transparent;
     border: none;
     color: #d1d4dc;
-    padding: 10px 16px;
-    text-align: left;
+    padding: 8px 12px;
+    text-align: center;
     cursor: pointer;
-    font-size: 13px;
-    width: 100%;
+    font-size: 16px;
     outline: none;
+    white-space: nowrap;
 }
 .drawing-dropdown-content button:hover {
     background-color: #2a2e39;
@@ -791,22 +862,63 @@ body.light-theme .drawing-dropdown-content button:hover {
         .rs-tab-content { display: none !important; flex: 1; flex-direction: column; overflow: hidden; width: 340px; }
         .rs-tab-content.active { display: flex !important; }
 
+.tf-knob-wrapper { position: relative; display: inline-block; margin: 0 10px; }
+.tf-knob-btn { width: 36px; height: 36px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #4a5568, #1a202c); box-shadow: inset 2px 2px 4px rgba(255, 255, 255, 0.1), inset -2px -2px 4px rgba(0, 0, 0, 0.5), 2px 2px 5px rgba(0, 0, 0, 0.4); color: #e2e8f0; font-size: 13px; font-weight: bold; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; border: 1px solid #2d3748; transition: transform 0.1s; }
+.tf-knob-btn:active { transform: scale(0.95); box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.6), 0 0 2px rgba(0, 0, 0, 0.4); }
+.light-theme .tf-knob-btn { background: radial-gradient(circle at 30% 30%, #e2e8f0, #a0aec0); box-shadow: inset 2px 2px 4px rgba(255, 255, 255, 0.8), inset -2px -2px 4px rgba(0, 0, 0, 0.2), 2px 2px 5px rgba(0, 0, 0, 0.2); color: #2d3748; border: 1px solid #cbd5e0; }
+.tf-roller-popover { position: absolute; bottom: 45px; left: 50%; transform: translateX(-50%); width: 150px; height: 40px; background: linear-gradient(to bottom, #2d3748, #1a202c, #2d3748); border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.5), inset 0 2px 5px rgba(255,255,255,0.1); overflow: hidden; display: none; z-index: 1000; border: 1px solid #4a5568; user-select: none; }
+.tf-roller-popover.show { display: block; animation: popUp 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes popUp { from { opacity: 0; transform: translateX(-50%) translateY(10px) scale(0.8); } to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); } }
+.light-theme .tf-roller-popover { background: linear-gradient(to bottom, #edf2f7, #cbd5e0, #edf2f7); border: 1px solid #a0aec0; box-shadow: 0 10px 20px rgba(0,0,0,0.2), inset 0 2px 5px rgba(255,255,255,0.5); }
+.tf-roller-window { width: 150px; height: 40px; overflow: hidden; position: relative; mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent); }
+.tf-roller-track { display: flex; height: 100%; width: max-content; cursor: grab; transition: transform 0.1s ease-out; }
+.tf-roller-track:active { cursor: grabbing; }
+.tf-item { width: 50px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #a0aec0; font-weight: 600; transition: color 0.2s, font-size 0.2s; pointer-events: none; }
+.tf-item.active { color: #fff; font-size: 16px; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+.light-theme .tf-item { color: #718096; }
+.light-theme .tf-item.active { color: #1a202c; text-shadow: 0 0 5px rgba(0,0,0,0.2); }
+.tf-roller-center-mark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 30px; border-radius: 8px; border: 2px solid rgba(33, 150, 243, 0.5); pointer-events: none; box-shadow: inset 0 0 10px rgba(33, 150, 243, 0.2); z-index: 10; }
 </style>
-    <link rel="stylesheet" href="fundamental.css?v=2">
+    <link rel="stylesheet" href="fundamental.css?v=5">
 </head>
 <body>
     <div class="toolbar" id="toolbar1">
+        <div class="brand-logo">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="4" y="14" width="4" height="6" rx="1" fill="url(#paint0_linear)"/>
+                <rect x="10" y="6" width="4" height="14" rx="1" fill="url(#paint1_linear)"/>
+                <rect x="16" y="10" width="4" height="10" rx="1" fill="url(#paint2_linear)"/>
+                <line x1="12" y1="3" x2="12" y2="6" stroke="var(--text-secondary)" stroke-width="2" stroke-linecap="round"/>
+                <line x1="6" y1="11" x2="6" y2="14" stroke="var(--text-secondary)" stroke-width="2" stroke-linecap="round"/>
+                <line x1="18" y1="7" x2="18" y2="10" stroke="var(--text-secondary)" stroke-width="2" stroke-linecap="round"/>
+                <defs>
+                    <linearGradient id="paint0_linear" x1="6" y1="14" x2="6" y2="20" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#2962ff"/>
+                        <stop offset="1" stop-color="#2962ff" stop-opacity="0.3"/>
+                    </linearGradient>
+                    <linearGradient id="paint1_linear" x1="12" y1="6" x2="12" y2="20" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#2962ff"/>
+                        <stop offset="1" stop-color="#2962ff" stop-opacity="0.3"/>
+                    </linearGradient>
+                    <linearGradient id="paint2_linear" x1="18" y1="10" x2="18" y2="20" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#2962ff"/>
+                        <stop offset="1" stop-color="#2962ff" stop-opacity="0.3"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <span>KlineChart</span>
+        </div>
         
-        <button class="indicator-btn" id="btnToolsSidebar" onclick="toggleToolsSidebar()" style="font-size: 16px; margin-right: 10px;" title="Thanh công cụ">🛠️</button>
+        <button class="indicator-btn" id="btnToolsSidebar" onclick="toggleToolsSidebar()" style="font-size: 16px; margin-right: 4px;" title="Thanh công cụ">🛠️</button>
     
         
-        <span id="currentSymbolDisplay" style="display:none;">VNINDEX</span>
+        <span id="currentSymbolDisplay" style="display:none;">HPG</span>
         <div class="symbol-info-block" onclick="openSearchModal(1)">
             <div class="sib-left">
-                <div class="sib-name" id="sibName">VNINDEX</div>
+                <div class="sib-name" id="sibName">Công ty Cổ phần Tập đoàn Hòa Phát</div>
                 <div class="sib-symbol-row">
-                    <span class="sib-icon">🕒</span>
-                    <span class="sib-symbol" id="sibSymbol">VNINDEX:HSX</span>
+                    <span class="sib-icon">📈</span>
+                    <span class="sib-symbol" id="sibSymbol">HPG:HOSE</span>
                     <span class="sib-edit">✎</span>
                 </div>
             </div>
@@ -816,50 +928,27 @@ body.light-theme .drawing-dropdown-content button:hover {
             </div>
         </div>
         
-        
-        <select id="resolutionSelect" onchange="fetchCurrentSymbol(1)" class="tv-resolution-select">
-                <option value="60">1H</option>
-                <option value="1D" selected>1D</option>
-                <option value="1W">1W</option>
-                <option value="1M">1M</option>
-                <option value="1Y">1Y</option>
-        </select>
-        
-        <div style="width: 1px; height: 30px; background: #363c4e; margin: 0 15px;"></div>
-        
-        <div class="drawing-tools" style="display: flex; gap: 8px; margin-left: 20px; align-items: center;">
-            <div class="drawing-dropdown">
-                <button class="indicator-btn" id="drawingDropdownBtn" style="font-size: 16px; padding: 4px 8px;" title="Công cụ vẽ" onclick="event.stopPropagation(); document.getElementById('drawingDropdownContent').classList.toggle('show')">✏️</button>
-                <div class="drawing-dropdown-content" id="drawingDropdownContent">
-                    <button onclick="chart1.createOverlay({name: 'segment', groupId: 'drawing'})">📈 Đường xu hướng</button>
-                    <button onclick="chart1.createOverlay({name: 'simpleArrow', groupId: 'drawing'})">↗️ Mũi tên</button>
-                    <button onclick="chart1.createOverlay({name: 'simpleRect', groupId: 'drawing'})">🟦 Khung chữ nhật</button>
-                    <button onclick="chart1.createOverlay({name: 'priceRange', groupId: 'drawing'})">↕️ Khoảng giá</button>
-                    <button onclick="addTextAnnotation(1)" style="font-family: serif; font-weight: bold;">T Chèn văn bản</button>
-                    <button onclick="chart1.removeOverlay({groupId: 'drawing'})" >🗑️ Xóa tất cả</button>
-                </div>
-            </div>
-        </div>
-        
+
+
         <div style="flex: 1;"></div>
-        <button class="indicator-btn" id="btnSplitScreen" onclick="toggleSplitScreen()" style="font-size: 16px; margin-right: 5px;" title="Chia đôi màn hình">🪟</button>
-        <button class="indicator-btn" id="btnTheme" onclick="toggleTheme()" style="font-size: 18px; padding: 4px 8px; margin-right: 5px; text-align: center;" title="Giao diện Sáng/Tối">🌗</button>
             </div>
     
-    <div id="loading" class="loading">Đang lấy dữ liệu...</div>
+    <div id="loading" class="loading"></div>
     <div class="content-row">
         <div id="toolsSidebar" class="tools-sidebar">
             <div style="padding: 5px 10px; color: #787b86; font-size: 11px; text-transform: uppercase; font-weight: bold;">Công cụ nâng cao</div>
+            
+            <div style="padding: 5px 10px; margin-top: 5px; color: #b2b5be; font-size: 10px; font-weight: bold; border-bottom: 1px solid #2a2e39; margin-bottom: 5px;">KỸ THUẬT</div>
             <button class="indicator-btn" id="btnTrend" onclick="toggleTrend()" >📈 Xu hướng</button>
             <button class="indicator-btn" id="btnKeyLevel" onclick="toggleKeyLevel()" >🎯 Key Level</button>
             <button class="indicator-btn" id="btnPatterns" onclick="togglePatterns()" >📐 Mẫu hình</button>
-            
             <button class="indicator-btn" id="btnCandlePatterns" onclick="toggleCandlePatterns()" >🕯️ Mô hình nến</button>
             <button class="indicator-btn" id="btnGaps" onclick="toggleGaps()" >📉 Khoảng trống (Gaps)</button>
-            
             <button class="indicator-btn" id="btnDivergence" onclick="toggleDivergence()" >🔮 Phân kỳ</button>
-            <button class="indicator-btn" id="btnChannels" onclick="toggleChannels()" >🛤 Kênh giá</button>
-            <button class="indicator-btn" id="btnRrg" onclick="openRrgModal('single')" title="Biểu đồ Relative Rotation Graph" style="color: #03a9f4;">🕸 Biểu đồ RRG</button>
+            <button class="indicator-btn" id="btnChannels" onclick="toggleChannels()" >🛏️ Kênh giá</button>
+            <button class="indicator-btn" id="btnRrg" onclick="openRrgModal('single')" title="Biểu đồ Relative Rotation Graph" style="color: #03a9f4;">🕸️ Biểu đồ RRG</button>
+            
+            <div style="padding: 5px 10px; margin-top: 15px; color: #b2b5be; font-size: 10px; font-weight: bold; border-bottom: 1px solid #2a2e39; margin-bottom: 5px;">CƠ BẢN</div>
             <button class="indicator-btn" id="btnValuation" onclick="openValuationModal()" title="Biểu đồ Định giá (P/E, P/B)" style="color: #00bcd4;">📊 Định giá</button>
             <button class="indicator-btn" id="btnFinancial" onclick="openFinancialModal()" title="Chỉ số tài chính" style="color: #4caf50;">📊 Tài chính</button>
             <button class="indicator-btn" id="btnCafef" onclick="openCafefModal()" title="Báo cáo tài chính CafeF" style="color: #ff9800;">☕ CafeF</button>
@@ -870,6 +959,21 @@ body.light-theme .drawing-dropdown-content button:hover {
             <div id="chart-container" oncontextmenu="return false;" style="flex: 1 0 calc(100vh - 120px); position: relative; min-height: calc(100vh - 120px);"></div>
             <div id="bottomBar" class="bottom-bar" style="display: none;">
                 <div id="performanceBanner" class="performance-banner"></div>
+                <div class="bottom-bar-divider"></div>
+                <div id="tfRollerContainer1" class="tf-knob-wrapper"></div>
+                <input type="hidden" id="resolutionSelect" value="1D">
+                <div class="bottom-bar-divider"></div>
+                <div class="drawing-dropdown" style="margin: 0 10px;">
+                    <button class="indicator-btn" id="drawingDropdownBtn" style="font-size: 16px; padding: 4px 8px; border-radius: 4px;" title="Công cụ vẽ" onclick="event.stopPropagation(); document.getElementById('drawingDropdownContent').classList.toggle('show')">✏️</button>
+                    <div class="drawing-dropdown-content" id="drawingDropdownContent">
+                        <button title="Đường xu hướng" onclick="chart1.createOverlay({name: 'segment', groupId: 'drawing', onDrawEnd: function(e){ pushDrawHistory(1, e.overlay.id); }})">📈</button>
+                        <button title="Mũi tên" onclick="chart1.createOverlay({name: 'simpleArrow', groupId: 'drawing', onDrawEnd: function(e){ pushDrawHistory(1, e.overlay.id); }})">↗️</button>
+                        <button title="Khung chữ nhật" onclick="chart1.createOverlay({name: 'simpleRect', groupId: 'drawing', onDrawEnd: function(e){ pushDrawHistory(1, e.overlay.id); }})">🟦</button>
+                        <button title="Khoảng giá" onclick="chart1.createOverlay({name: 'priceRange', groupId: 'drawing', onDrawEnd: function(e){ pushDrawHistory(1, e.overlay.id); }})">↕️</button>
+                        <button title="Chèn văn bản" onclick="addTextAnnotation(1)" style="font-family: serif; font-weight: bold;">T</button>
+                        <button title="Xóa tất cả" onclick="chart1.removeOverlay({groupId: 'drawing'})">🗑️</button>
+                    </div>
+                </div>
                 <div class="bottom-bar-divider"></div>
                 <div class="bottom-indicators">
                     <div class="ind-row">
@@ -883,20 +987,46 @@ body.light-theme .drawing-dropdown-content button:hover {
                         <button class="pill-btn" data-id="macd" onclick="toggleIndicator('macd', 'MACD', false)">MACD</button>
                         <button class="pill-btn" data-id="rsi" onclick="toggleIndicator('rsi', 'RSI', false)">RSI</button>
                         <button class="pill-btn" data-id="vol" onclick="toggleIndicator('vol', 'VOL', false)">VOL</button>
+                        <button class="pill-btn active" data-id="volma" onclick="toggleVolMA()">VOL MA</button>
                     </div>
                 </div>
             </div>
             <div id="chart-resizer" style="height: 4px; background: #2a2e39; display: none;"></div>
-            <div class="toolbar" id="toolbar2" style="display: none; border-top: 1px solid var(--border-color, #2a2e39);">
-        <button class="indicator-btn" id="btnToolsSidebar2" style="display:none;" onclick="" style="font-size: 16px; margin-right: 10px;" title="Thanh công cụ">🛠️</button>
+            <div class="toolbar" id="toolbar2" style="display: none; border-top: 1px solid var(--border-subtle);">
+        <div class="brand-logo">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="4" y="14" width="4" height="6" rx="1" fill="url(#paint0_linear2)"/>
+                <rect x="10" y="6" width="4" height="14" rx="1" fill="url(#paint1_linear2)"/>
+                <rect x="16" y="10" width="4" height="10" rx="1" fill="url(#paint2_linear2)"/>
+                <line x1="12" y1="3" x2="12" y2="6" stroke="var(--text-secondary)" stroke-width="2" stroke-linecap="round"/>
+                <line x1="6" y1="11" x2="6" y2="14" stroke="var(--text-secondary)" stroke-width="2" stroke-linecap="round"/>
+                <line x1="18" y1="7" x2="18" y2="10" stroke="var(--text-secondary)" stroke-width="2" stroke-linecap="round"/>
+                <defs>
+                    <linearGradient id="paint0_linear2" x1="6" y1="14" x2="6" y2="20" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#2962ff"/>
+                        <stop offset="1" stop-color="#2962ff" stop-opacity="0.3"/>
+                    </linearGradient>
+                    <linearGradient id="paint1_linear2" x1="12" y1="6" x2="12" y2="20" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#2962ff"/>
+                        <stop offset="1" stop-color="#2962ff" stop-opacity="0.3"/>
+                    </linearGradient>
+                    <linearGradient id="paint2_linear2" x1="18" y1="10" x2="18" y2="20" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#2962ff"/>
+                        <stop offset="1" stop-color="#2962ff" stop-opacity="0.3"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <span>KlineChart</span>
+        </div>
+        <button class="indicator-btn" id="btnToolsSidebar2" style="display:none;" onclick="" style="font-size: 16px; margin-right: 4px;" title="Thanh công cụ">🛠️</button>
         
-        <span id="currentSymbolDisplay2" style="display:none;">VNINDEX</span>
+        <span id="currentSymbolDisplay2" style="display:none;">HPG</span>
         <div class="symbol-info-block" onclick="openSearchModal(2)">
             <div class="sib-left">
-                <div class="sib-name" id="sibName2">VNINDEX</div>
+                <div class="sib-name" id="sibName2">Công ty Cổ phần Tập đoàn Hòa Phát</div>
                 <div class="sib-symbol-row">
-                    <span class="sib-icon">🕒</span>
-                    <span class="sib-symbol" id="sibSymbol2">VNINDEX:HSX</span>
+                    <span class="sib-icon">📈</span>
+                    <span class="sib-symbol" id="sibSymbol2">HPG:HOSE</span>
                     <span class="sib-edit">✎</span>
                 </div>
             </div>
@@ -906,31 +1036,8 @@ body.light-theme .drawing-dropdown-content button:hover {
             </div>
         </div>
         
-        
-        <select id="resolutionSelect2" onchange="fetchCurrentSymbol(2)" class="tv-resolution-select">
-                <option value="60">1H</option>
-                <option value="1D" selected>1D</option>
-                <option value="1W">1W</option>
-                <option value="1M">1M</option>
-                <option value="1Y">1Y</option>
-        </select>
-        
-        <div style="width: 1px; height: 30px; background: #363c4e; margin: 0 15px;"></div>
-        
-        <div class="drawing-tools" style="display: flex; gap: 8px; margin-left: 20px; align-items: center;">
-            <div class="drawing-dropdown">
-                <button class="indicator-btn" id="drawingDropdownBtn2" style="font-size: 16px; padding: 4px 8px;" title="Công cụ vẽ" onclick="event.stopPropagation(); document.getElementById('drawingDropdownContent2').classList.toggle('show')">✏️</button>
-                <div class="drawing-dropdown-content" id="drawingDropdownContent2">
-                    <button onclick="chart2.createOverlay({name: 'segment', groupId: 'drawing'})">📈 Đường xu hướng</button>
-                    <button onclick="chart2.createOverlay({name: 'simpleArrow', groupId: 'drawing'})">↗️ Mũi tên</button>
-                    <button onclick="chart2.createOverlay({name: 'simpleRect', groupId: 'drawing'})">🟦 Khung chữ nhật</button>
-                    <button onclick="chart2.createOverlay({name: 'priceRange', groupId: 'drawing'})">↕️ Khoảng giá</button>
-                    <button onclick="addTextAnnotation(2)" style="font-family: serif; font-weight: bold;">T Chèn văn bản</button>
-                    <button onclick="chart2.removeOverlay({groupId: 'drawing'})" >🗑️ Xóa tất cả</button>
-                </div>
-            </div>
-        </div>
-        
+
+
         <div style="flex: 1;"></div>
         <div style="width: 1px; height: 30px; background: #363c4e; margin: 0 10px;"></div>
         
@@ -941,6 +1048,21 @@ body.light-theme .drawing-dropdown-content button:hover {
             <div id="chart-container-2" oncontextmenu="return false;" style="flex: 1; position: relative; display: none; min-height: 100px;"></div>
             <div id="bottomBar2" class="bottom-bar" style="display: none;">
                 <div id="performanceBanner2" class="performance-banner"></div>
+                <div class="bottom-bar-divider"></div>
+                <div id="tfRollerContainer2" class="tf-knob-wrapper"></div>
+                <input type="hidden" id="resolutionSelect2" value="1D">
+                <div class="bottom-bar-divider"></div>
+                <div class="drawing-dropdown" style="margin: 0 10px;">
+                    <button class="indicator-btn" id="drawingDropdownBtn2" style="font-size: 16px; padding: 4px 8px; border-radius: 4px;" title="Công cụ vẽ" onclick="event.stopPropagation(); document.getElementById('drawingDropdownContent2').classList.toggle('show')">✏️</button>
+                    <div class="drawing-dropdown-content" id="drawingDropdownContent2">
+                        <button title="Đường xu hướng" onclick="chart2.createOverlay({name: 'segment', groupId: 'drawing', onDrawEnd: function(e){ pushDrawHistory(2, e.overlay.id); }})">📈</button>
+                        <button title="Mũi tên" onclick="chart2.createOverlay({name: 'simpleArrow', groupId: 'drawing', onDrawEnd: function(e){ pushDrawHistory(2, e.overlay.id); }})">↗️</button>
+                        <button title="Khung chữ nhật" onclick="chart2.createOverlay({name: 'simpleRect', groupId: 'drawing', onDrawEnd: function(e){ pushDrawHistory(2, e.overlay.id); }})">🟦</button>
+                        <button title="Khoảng giá" onclick="chart2.createOverlay({name: 'priceRange', groupId: 'drawing', onDrawEnd: function(e){ pushDrawHistory(2, e.overlay.id); }})">↕️</button>
+                        <button title="Chèn văn bản" onclick="addTextAnnotation(2)" style="font-family: serif; font-weight: bold;">T</button>
+                        <button title="Xóa tất cả" onclick="chart2.removeOverlay({groupId: 'drawing'})">🗑️</button>
+                    </div>
+                </div>
                 <div class="bottom-bar-divider"></div>
                 <div class="bottom-indicators">
                     <div class="ind-row">
@@ -954,6 +1076,7 @@ body.light-theme .drawing-dropdown-content button:hover {
                         <button class="pill-btn" onclick="toggleIndicator('macd', 'MACD', false)">MACD</button>
                         <button class="pill-btn" onclick="toggleIndicator('rsi', 'RSI', false)">RSI</button>
                         <button class="pill-btn" onclick="toggleIndicator('vol', 'VOL', false)">VOL</button>
+                        <button class="pill-btn active" data-id="volma" onclick="toggleVolMA()">VOL MA</button>
                     </div>
                 </div>
             </div>
@@ -1113,7 +1236,7 @@ body.light-theme .drawing-dropdown-content button:hover {
                         <tr><td>Giá trị sổ sách</td><td id="coGtss">-</td></tr>
                         <tr><td>P/B</td><td id="coPb">-</td></tr>
                         <tr><td>ROE</td><td id="coRoe">-</td></tr>
-                        <tr><td>RS</td><td id="coRs">-</td></tr>
+                        <tr><td>RS</td><td><div class="rs-bar-container"><div class="rs-bar-fill" id="coRsBar"></div></div><span id="coRs">-</span></td></tr>
                         <tr><td>+/- DT quý gần nhất</td><td id="coDtQuy">-</td></tr>
                         <tr><td>+/- LN quý gần nhất</td><td id="coLnQuy">-</td></tr>
                     </table>
@@ -1172,8 +1295,9 @@ body.light-theme .drawing-dropdown-content button:hover {
             </div>
             <div class="search-tabs">
                 <button class="search-tab active" data-type="all" onclick="setSearchTab('all')">Tất cả</button>
-                <button class="search-tab" data-type="stock" onclick="setSearchTab('stock')">Cổ phiếu</button>
-                <button class="search-tab" data-type="index" onclick="setSearchTab('index')">Chỉ số</button>
+                <button class="search-tab" data-type="HOSE" onclick="setSearchTab('HOSE')">HOSE</button>
+                <button class="search-tab" data-type="HNX" onclick="setSearchTab('HNX')">HNX</button>
+                <button class="search-tab" data-type="UPCOM" onclick="setSearchTab('UPCOM')">UPCOM</button>
             </div>
             <div class="search-list-header">
                 <div style="flex: 1;">Mã</div>
@@ -2112,7 +2236,58 @@ klinecharts.registerOverlay({
 
         // --- 2. Khởi tạo Biểu đồ ---
         let isLightMode = localStorage.getItem('theme') === 'light';
-        let chart1 = klinecharts.init('chart-container');
+        
+        // Custom API: custom OHLCV tooltip only
+        const kcCustomApi = {
+            formatBigNumber: (value) => {
+                if (Math.abs(value) >= 1e9) return (value / 1e9).toFixed(2) + 'B';
+                if (Math.abs(value) >= 1e6) return (value / 1e6).toFixed(2) + 'M';
+                if (Math.abs(value) >= 1e3) return (value / 1e3).toFixed(1) + 'K';
+                return String(value);
+            }
+        };
+        
+        let chart1 = klinecharts.init('chart-container', { customApi: kcCustomApi });
+        chart1.setStyles({ yAxis: { size: 75 } });
+        
+        // Style custom cho thanh OHLCV info
+        const kcTooltipStyles = {
+            candle: {
+                tooltip: {
+                    showRule: 'always',
+                    showType: 'standard',
+                    labels: ['Thời gian', 'O', 'H', 'L', 'C', 'KL'],
+                    values: null,
+                    defaultValue: '--',
+                    rect: {
+                        position: 'fixed',
+                        paddingLeft: 0,
+                        paddingRight: 0,
+                        paddingTop: 0,
+                        paddingBottom: 6,
+                        offsetLeft: 0,
+                        offsetTop: 0,
+                        offsetRight: 0,
+                        offsetBottom: 0,
+                        borderRadius: 0,
+                        borderSize: 0,
+                        borderColor: 'transparent',
+                        backgroundColor: 'transparent'
+                    },
+                    text: {
+                        size: 12,
+                        family: 'Inter, -apple-system, sans-serif',
+                        weight: '500',
+                        color: '#9598A1',
+                        marginLeft: 0,
+                        marginTop: 0,
+                        marginRight: 16,
+                        marginBottom: 0
+                    }
+                }
+            }
+        };
+        chart1.setStyles(kcTooltipStyles);
         let chart2 = null;
         let chart = chart1; // Global active chart pointer
         let isSplitScreen = false;
@@ -2138,8 +2313,10 @@ klinecharts.registerOverlay({
                 wm1.style.top = '25%';
                 
                 if (!chart2) {
-                    chart2 = klinecharts.init('chart-container-2');
+                    chart2 = klinecharts.init('chart-container-2', { customApi: kcCustomApi });
                     chart2.setStyles(isLightMode ? 'light' : 'dark');
+                    chart2.setStyles({ yAxis: { size: 75 } });
+                    chart2.setStyles(kcTooltipStyles);
                     
                     chartStates[2].symbol = chartStates[1].symbol;
                     chartStates[2].name = chartStates[1].name;
@@ -2162,7 +2339,7 @@ klinecharts.registerOverlay({
                             if (isOverlay) {
                                 chart2.createIndicator(indParam, true, { id: 'candle_pane' });
                             } else {
-                                const paneId = chart2.createIndicator(indParam, false);
+                                const paneId = chart2.createIndicator(indParam, false, { height: 120 });
                                 activeIndicators[btnId].paneId2 = paneId;
                             }
                         }
@@ -2192,13 +2369,11 @@ klinecharts.registerOverlay({
         
         if (isLightMode) {
             document.body.classList.add('light-theme');
-            if (chart1) chart1.setStyles('light');
-            if (chart2) chart2.setStyles('light');
-            document.getElementById('btnTheme').innerText = '🌙';
+            if (chart1) { chart1.setStyles('light'); chart1.setStyles({ yAxis: { size: 75 } }); }
+            if (chart2) { chart2.setStyles('light'); chart2.setStyles({ yAxis: { size: 75 } }); }
         } else {
-            if (chart1) chart1.setStyles('dark');
-            if (chart2) chart2.setStyles('dark');
-            document.getElementById('btnTheme').innerText = '🌓';
+            if (chart1) { chart1.setStyles('dark'); chart1.setStyles({ yAxis: { size: 75 } }); }
+            if (chart2) { chart2.setStyles('dark'); chart2.setStyles({ yAxis: { size: 75 } }); }
         }
         
         // Bật VOL mặc định
@@ -2219,14 +2394,12 @@ klinecharts.registerOverlay({
             localStorage.setItem('theme', isLightMode ? 'light' : 'dark');
             if (isLightMode) {
                 document.body.classList.add('light-theme');
-                if (chart1) chart1.setStyles('light');
-                if (chart2) chart2.setStyles('light');
-                document.getElementById('btnTheme').innerText = '🌙';
+                if (chart1) { chart1.setStyles('light'); chart1.setStyles({ yAxis: { size: 75 } }); chart1.setStyles(kcTooltipStyles); }
+                if (chart2) { chart2.setStyles('light'); chart2.setStyles({ yAxis: { size: 75 } }); chart2.setStyles(kcTooltipStyles); }
             } else {
                 document.body.classList.remove('light-theme');
-                if (chart1) chart1.setStyles('dark');
-                if (chart2) chart2.setStyles('dark');
-                document.getElementById('btnTheme').innerText = '🌓';
+                if (chart1) { chart1.setStyles('dark'); chart1.setStyles({ yAxis: { size: 75 } }); chart1.setStyles(kcTooltipStyles); }
+                if (chart2) { chart2.setStyles('dark'); chart2.setStyles({ yAxis: { size: 75 } }); chart2.setStyles(kcTooltipStyles); }
             }
             if (typeof isAutoAnalysisOn !== 'undefined' && isAutoAnalysisOn) {
                 toggleAutoAnalysis(); // Tắt AI
@@ -2264,6 +2437,11 @@ klinecharts.registerOverlay({
                         name: 'BOLL', 
                         styles: { lines: [{ color: '#9C27B0' }, { color: '#9C27B0', style: 'dashed' }, { color: '#9C27B0' }] } 
                     };
+                } else if (indicatorName === 'VOL') {
+                    indParam = {
+                        name: 'VOL',
+                        calcParams: (typeof window.isVolMAActive !== 'undefined' && !window.isVolMAActive) ? [] : [20]
+                    };
                 }
                 
                 let paneId1 = 'candle_pane';
@@ -2273,8 +2451,8 @@ klinecharts.registerOverlay({
                     chart1.createIndicator(indParam, true, { id: 'candle_pane' });
                     if (isSplitScreen && chart2) chart2.createIndicator(indParam, true, { id: 'candle_pane' });
                 } else {
-                    paneId1 = chart1.createIndicator(indParam, false);
-                    if (isSplitScreen && chart2) paneId2 = chart2.createIndicator(indParam, false);
+                    paneId1 = chart1.createIndicator(indParam, false, { height: 120 });
+                    if (isSplitScreen && chart2) paneId2 = chart2.createIndicator(indParam, false, { height: 120 });
                 }
                 activeIndicators[btnId] = { paneId: paneId1, paneId2: paneId2 };
                 if (btn) btn.classList.add('active');
@@ -2407,7 +2585,7 @@ klinecharts.registerOverlay({
                 
                 const resMap = {
                     "1D": "D", "1W": "D", "1M": "D",
-                    "60": "60", "15": "15", "5": "5", "1": "1", "1H": "60"
+                    "60": "60", "30": "30", "15": "15", "5": "5", "1": "1", "1H": "60"
                 };
                 const dRes = resMap[resolution] || "D";
                 
@@ -2581,10 +2759,17 @@ klinecharts.registerOverlay({
                 if (firstItem && firstItem.dataset.symbol) {
                     firstItem.click();
                 } else if (query !== '') {
-                    addRecentSearch({ symbol: query, name: query, type: 'stock', exchange: 'HSX' });
-                    document.getElementById('currentSymbolDisplay').innerText = query;
+                    let fullS = lastSymbolsCache.find(x => x.symbol === query);
+                    if (!fullS) fullS = { symbol: query, name: query, type: 'stock', exchange: 'HOSE' };
+                    addRecentSearch(fullS);
+                    
+                    if (activeChartTarget === 1) {
+                        document.getElementById('currentSymbolDisplay').innerText = query;
+                    } else if (activeChartTarget === 2) {
+                        document.getElementById('currentSymbolDisplay2').innerText = query;
+                    }
                     closeSearchModal();
-                    fetchStockData(query);
+                    fetchStockData(query, activeChartTarget);
                 }
             } else if (e.key === 'Escape') {
                 document.getElementById('searchModalOverlay').classList.remove('show');
@@ -2707,9 +2892,12 @@ klinecharts.registerOverlay({
             const listEl = document.getElementById('searchList');
             listEl.innerHTML = '';
             
-            let filtered = lastSymbolsCache;
+            let filtered = lastSymbolsCache.filter(s => s.type === 'stock');
             if (currentSearchType !== 'all') {
-                filtered = filtered.filter(s => s.type === currentSearchType);
+                filtered = filtered.filter(s => {
+                    const ex = (s.exchange === 'HSX' ? 'HOSE' : s.exchange);
+                    return ex === currentSearchType;
+                });
             }
             
             if (queryStr) {
@@ -2753,7 +2941,7 @@ klinecharts.registerOverlay({
                     <div class="col-name">${s.name}</div>
                     <div class="col-type">
                         <span>${s.type || 'stock'}</span>
-                        <span class="col-exchange">${s.exchange || 'HSX'}</span>
+                        <span class="col-exchange">${(s.exchange === 'HSX' ? 'HOSE' : s.exchange) || 'HOSE'}</span>
                     </div>
                 `;
                 listEl.appendChild(li);
@@ -4698,7 +4886,8 @@ var isDivergenceOn = false;
 
         // Tải mã VNINDEX mặc định lúc đầu
         // --- Tải dữ liệu ban đầu ---
-        const savedSymbol = localStorage.getItem('last_opened_symbol') || 'VNINDEX';
+        let savedSymbol = localStorage.getItem('last_opened_symbol') || 'HPG';
+        if (savedSymbol === 'VNINDEX') savedSymbol = 'HPG';
         document.getElementById('currentSymbolDisplay').innerText = savedSymbol;
         fetchStockData(savedSymbol);
         
@@ -4774,12 +4963,16 @@ var isDivergenceOn = false;
         }
         
         let currentTextOverlayId = null;
+        let currentTextChartIdx = 1;
 
-        function addTextAnnotation() {
-            chart.createOverlay({
+        function addTextAnnotation(chartIdx) {
+            currentTextChartIdx = chartIdx || 1;
+            const targetChart = currentTextChartIdx === 2 && typeof chart2 !== 'undefined' ? chart2 : chart1;
+            targetChart.createOverlay({
                 groupId: 'drawing',
                 name: 'interactiveText',
                 onDrawEnd: function (e) {
+                    pushDrawHistory(currentTextChartIdx, e.overlay.id);
                     currentTextOverlayId = e.overlay.id;
                     document.getElementById('textModalOverlay').style.display = 'flex';
                     document.getElementById('textModalInput').value = '';
@@ -4793,28 +4986,37 @@ var isDivergenceOn = false;
             if (e && e.target !== document.getElementById('textModalOverlay')) return;
             document.getElementById('textModalOverlay').style.display = 'none';
             if (currentTextOverlayId) {
-                chart1.removeOverlay({ id: currentTextOverlayId });
+                const targetChart = currentTextChartIdx === 2 && typeof chart2 !== 'undefined' ? chart2 : chart1;
+                targetChart.removeOverlay({ id: currentTextOverlayId });
                 currentTextOverlayId = null;
             }
         }
 
         function saveTextModal() {
             const text = document.getElementById('textModalInput').value;
+            const size = parseInt(document.getElementById('textModalSize').value) || 14;
+            const color = document.getElementById('textModalColor').value;
+            const isBold = document.getElementById('textModalBold').checked;
+            const isItalic = document.getElementById('textModalItalic').checked;
+            const targetChart = currentTextChartIdx === 2 && typeof chart2 !== 'undefined' ? chart2 : chart1;
+
             if (text && currentTextOverlayId) {
-                chart.overrideOverlay({
+                targetChart.overrideOverlay({
                     id: currentTextOverlayId,
                     extendData: text,
                     styles: {
                         text: {
-                            color: '#FFF',
-                            size: 14,
+                            color: color,
+                            size: size,
+                            weight: isBold ? 'bold' : 'normal',
+                            style: isItalic ? 'italic' : 'normal',
                             paddingLeft: 4, paddingRight: 4, paddingTop: 2, paddingBottom: 2,
                             backgroundColor: 'transparent'
                         }
                     }
                 });
             } else if (currentTextOverlayId) {
-                chart1.removeOverlay({ id: currentTextOverlayId });
+                targetChart.removeOverlay({ id: currentTextOverlayId });
             }
             document.getElementById('textModalOverlay').style.display = 'none';
             currentTextOverlayId = null;
@@ -5419,10 +5621,9 @@ var isDivergenceOn = false;
             </div>
             <div class="search-tabs">
                 <button class="search-tab active" data-type="all" onclick="setSearchTab('all')">Tất cả</button>
-                <button class="search-tab" data-type="stock" onclick="setSearchTab('stock')">Cổ phiếu</button>
-                <button class="search-tab" data-type="index" onclick="setSearchTab('index')">Index</button>
-                <button class="search-tab" data-type="warrant" onclick="setSearchTab('warrant')">Chứng quyền</button>
-                <button class="search-tab" data-type="future" onclick="setSearchTab('future')">Phái sinh</button>
+                <button class="search-tab" data-type="HOSE" onclick="setSearchTab('HOSE')">HOSE</button>
+                <button class="search-tab" data-type="HNX" onclick="setSearchTab('HNX')">HNX</button>
+                <button class="search-tab" data-type="UPCOM" onclick="setSearchTab('UPCOM')">UPCOM</button>
             </div>
             <div class="search-list-header">
                 <span class="col-symbol">MÃ</span>
@@ -5698,13 +5899,7 @@ var isDivergenceOn = false;
             if (peChartInstance) peChartInstance.resize();
             if (pbChartInstance) pbChartInstance.resize();
         });
-        // Close dropdown when clicking outside
-        window.addEventListener('click', function(e) {
-            const dropdown = document.getElementById('drawingDropdownContent');
-            if (dropdown && dropdown.classList.contains('show')) {
-                dropdown.classList.remove('show');
-            }
-        });
+
     
         document.addEventListener('click', function(e) {
             const dropdown = document.getElementById('indicatorDropdownContent');
@@ -6137,6 +6332,127 @@ var isDivergenceOn = false;
         // Start polling globally
         chartRefreshInterval = setInterval(pollRealtimePrices, 5000);
 
+        const TF_OPTIONS = [
+            { label: '1m', value: '1' }, { label: '5m', value: '5' }, { label: '15m', value: '15' }, { label: '30m', value: '30' },
+            { label: '1H', value: '60' }, { label: '1D', value: '1D' }, { label: '1W', value: '1W' }, { label: '1M', value: '1M' }, { label: '1Y', value: '1Y' }
+        ];
+
+        function createTfRoller(chartIdx) {
+            const container = document.getElementById(`tfRollerContainer${chartIdx}`);
+            if (!container) return;
+            container.innerHTML = `
+                <div class="tf-knob-btn" id="tfKnobBtn${chartIdx}">1D</div>
+                <div class="tf-roller-popover" id="tfPopover${chartIdx}">
+                    <div class="tf-roller-center-mark"></div>
+                    <div class="tf-roller-window">
+                        <div class="tf-roller-track" id="tfTrack${chartIdx}">
+                            ${TF_OPTIONS.map(opt => `<div class="tf-item">${opt.label}</div>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            const knob = document.getElementById(`tfKnobBtn${chartIdx}`);
+            const popover = document.getElementById(`tfPopover${chartIdx}`);
+            const track = document.getElementById(`tfTrack${chartIdx}`);
+            const items = track.querySelectorAll('.tf-item');
+            const hiddenSelect = document.getElementById(chartIdx === 1 ? 'resolutionSelect' : 'resolutionSelect2');
+            
+            let currentIndex = 5; // Default 1D
+            const itemWidth = 50, baseOffset = 50;
+            let isDragging = false, startX = 0, currentX = 0, initialTx = 0;
+            
+            function updateVisuals(tx) {
+                track.style.transition = isDragging ? 'none' : 'transform 0.2s cubic-bezier(0.25, 1, 0.5, 1)';
+                track.style.transform = `translateX(${tx}px)`;
+                let rawIdx = Math.max(0, Math.min(TF_OPTIONS.length - 1, Math.round((baseOffset - tx) / itemWidth)));
+                items.forEach((el, i) => { el.classList.toggle('active', i === rawIdx); });
+            }
+            
+            let initialized = false;
+            function snapToCurrent() {
+                const tx = baseOffset - currentIndex * itemWidth;
+                updateVisuals(tx);
+                knob.innerText = TF_OPTIONS[currentIndex].label;
+                const oldVal = hiddenSelect.value;
+                hiddenSelect.value = TF_OPTIONS[currentIndex].value;
+                if (initialized && oldVal !== hiddenSelect.value) {
+                    fetchCurrentSymbol(chartIdx);
+                }
+            }
+            snapToCurrent();
+            initialized = true;
+            
+            knob.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isShown = popover.classList.contains('show');
+                document.querySelectorAll('.tf-roller-popover').forEach(p => p.classList.remove('show'));
+                if (!isShown) { popover.classList.add('show'); snapToCurrent(); }
+            });
+
+            const onStart = (clientX) => { isDragging = true; startX = clientX; initialTx = baseOffset - currentIndex * itemWidth; track.style.transition = 'none'; };
+            const onMove = (clientX) => {
+                if (!isDragging) return;
+                currentX = initialTx + (clientX - startX);
+                const maxTx = baseOffset + 20, minTx = baseOffset - (TF_OPTIONS.length - 1) * itemWidth - 20;
+                currentX = Math.max(minTx, Math.min(maxTx, currentX));
+                updateVisuals(currentX);
+            };
+            const onEnd = () => {
+                if (!isDragging) return;
+                isDragging = false;
+                currentIndex = Math.max(0, Math.min(TF_OPTIONS.length - 1, Math.round((baseOffset - currentX) / itemWidth)));
+                snapToCurrent();
+                setTimeout(() => { popover.classList.remove('show'); }, 300);
+            };
+
+            popover.addEventListener('mousedown', e => { e.preventDefault(); onStart(e.clientX); });
+            window.addEventListener('mousemove', e => onMove(e.clientX));
+            window.addEventListener('mouseup', onEnd);
+            
+            popover.addEventListener('touchstart', e => { onStart(e.touches[0].clientX); }, {passive: true});
+            window.addEventListener('touchmove', e => onMove(e.touches[0].clientX), {passive: true});
+            window.addEventListener('touchend', onEnd);
+            
+            window.addEventListener('click', e => { if (!container.contains(e.target)) popover.classList.remove('show'); });
+        }
+        
+        setTimeout(() => {
+            createTfRoller(1);
+            createTfRoller(2);
+        }, 500);
+
+        window.isVolMAActive = true;
+        window.toggleVolMA = function() {
+            window.isVolMAActive = !window.isVolMAActive;
+            document.querySelectorAll(`button[data-id="volma"]`).forEach(btn => window.isVolMAActive ? btn.classList.add('active') : btn.classList.remove('active'));
+            if (activeIndicators['vol']) {
+                const pane1 = activeIndicators['vol'].paneId;
+                chart1.overrideIndicator({ name: 'VOL', calcParams: window.isVolMAActive ? [20] : [] }, pane1);
+                if (typeof isSplitScreen !== 'undefined' && isSplitScreen && chart2) {
+                    const pane2 = activeIndicators['vol'].paneId2;
+                    chart2.overrideIndicator({ name: 'VOL', calcParams: window.isVolMAActive ? [20] : [] }, pane2);
+                }
+            }
+        };
+
+        window.drawHistory = [];
+        window.pushDrawHistory = function(chartIdx, id) {
+            window.drawHistory.push({ chartIdx, id });
+        };
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.key === 'z' || e.key === 'Z')) {
+                if (window.drawHistory.length > 0) {
+                    const lastAction = window.drawHistory.pop();
+                    if (lastAction.chartIdx === 1) {
+                        chart1.removeOverlay({ id: lastAction.id });
+                    } else if (lastAction.chartIdx === 2 && typeof chart2 !== 'undefined') {
+                        chart2.removeOverlay({ id: lastAction.id });
+                    }
+                }
+            }
+        });
+
 </script>
     <div class="search-modal-overlay" id="textModalOverlay" style="display: none;" onclick="closeTextModal(event)">
         <div class="search-modal" style="width: 400px; height: auto;" onclick="event.stopPropagation()">
@@ -6145,7 +6461,13 @@ var isDivergenceOn = false;
                 <span class="close-btn" onclick="closeTextModal()">&times;</span>
             </div>
             <div style="padding: 20px;">
-                <textarea id="textModalInput" rows="5" style="width: 100%; background: #131722; color: #d1d4dc; border: 1px solid #363c4e; border-radius: 4px; padding: 10px; font-size: 14px; outline: none;" placeholder="Văn bản"></textarea>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px; align-items: center; flex-wrap: wrap;">
+                    <label style="color: #d1d4dc;">Cỡ chữ: <input type="number" id="textModalSize" value="14" style="width: 50px; background: #131722; color: #d1d4dc; border: 1px solid #363c4e; border-radius: 4px; padding: 4px; outline: none;"></label>
+                    <label style="color: #d1d4dc; display: flex; align-items: center; gap: 4px;"><input type="color" id="textModalColor" value="#ffffff" style="background: transparent; border: none; cursor: pointer; padding: 0; width: 24px; height: 24px;"> Màu</label>
+                    <label style="color: #d1d4dc; display: flex; align-items: center; gap: 4px;"><input type="checkbox" id="textModalBold"> Đậm</label>
+                    <label style="color: #d1d4dc; display: flex; align-items: center; gap: 4px;"><input type="checkbox" id="textModalItalic"> Nghiêng</label>
+                </div>
+                <textarea id="textModalInput" rows="5" style="width: 100%; background: #131722; color: #d1d4dc; border: 1px solid #363c4e; border-radius: 4px; padding: 10px; font-size: 14px; outline: none;" placeholder="Nhập văn bản..."></textarea>
                 <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
                     <button class="indicator-btn" onclick="closeTextModal()">Hủy bỏ</button>
                     <button class="indicator-btn active" onclick="saveTextModal()">Ok</button>
@@ -6384,7 +6706,6 @@ var isDivergenceOn = false;
             const changeText = document.getElementById('sibChange').innerText;
             priceEl.innerText = document.getElementById('sibPrice').innerText;
             changeEl.innerText = changeText;
-            
             if (changeText.includes('-')) {
                 changeEl.style.color = '#e91e63'; // Red
                 priceEl.style.color = '#e91e63';
@@ -6446,6 +6767,120 @@ var isDivergenceOn = false;
                 console.error('Error fetching cafef overview:', e);
             } finally {
                 document.getElementById('coLoading').style.display = 'none';
+            }
+            
+            // Gọi thêm API Vietcap để cập nhật chính xác ROE, Tăng trưởng DT, LN
+            fetchVietcapFinance(symbol);
+        }
+
+        function getRSColor(rs) {
+            if (rs >= 90) return '#9c27b0';
+            if (rs >= 70) return '#4caf50';
+            if (rs >= 50) return '#ffeb3b';
+            if (rs >= 30) return '#ff9800';
+            return '#e91e63';
+        }
+
+        async function fetchVietcapFinance(symbol) {
+            try {
+                let needFallback = false;
+                if (window.SUMMARY && window.SUMMARY.rows) {
+                    const row = window.SUMMARY.rows.find(r => r.t === symbol);
+                    if (row) {
+                        if (row.roe !== undefined) {
+                            const el = document.getElementById('coRoe');
+                            el.innerText = row.roe + '%';
+                            el.style.color = '#4caf50';
+                        }
+                        
+                        if (row.rs !== undefined) {
+                            const el = document.getElementById('coRs');
+                            el.innerText = row.rs;
+                            el.style.color = getRSColor(row.rs);
+                            el.style.fontWeight = 'bold';
+                            
+                            const bar = document.getElementById('coRsBar');
+                            if(bar) {
+                                bar.style.width = row.rs + '%';
+                                bar.style.background = getRSColor(row.rs);
+                            }
+                        }
+                        
+                        if (row.revYoY !== undefined) {
+                            const el = document.getElementById('coDtQuy');
+                            el.innerText = (row.revYoY > 0 ? '+' : '') + row.revYoY + '%';
+                            el.style.color = row.revYoY >= 0 ? '#4caf50' : '#e91e63';
+                        } else {
+                            needFallback = true;
+                        }
+                        
+                        if (row.npatYoY !== undefined) {
+                            const el = document.getElementById('coLnQuy');
+                            el.innerText = (row.npatYoY > 0 ? '+' : '') + row.npatYoY + '%';
+                            el.style.color = row.npatYoY >= 0 ? '#4caf50' : '#e91e63';
+                        }
+                    } else {
+                        needFallback = true;
+                        document.getElementById('coRs').innerText = '-';
+                    }
+                } else {
+                    needFallback = true;
+                    const res = await fetch('https://khoanguyeninvest.vn/dashboard_data.js');
+                    const text = await res.text();
+                    const match = text.match(/window\.SUMMARY=(.*?);?$/m);
+                    if (match) {
+                        const jsonStr = match[1].split(';window')[0];
+                        window.SUMMARY = JSON.parse(jsonStr);
+                        fetchVietcapFinance(symbol);
+                        return; // return so it runs on next pass
+                    }
+                }
+                
+                if (needFallback) {
+                    try {
+                        const url = `https://iq.vietcap.com.vn/api/iq-insight-service/v1/company/${symbol}/financial-statement?section=INCOME_STATEMENT`;
+                        const res = await fetch(url);
+                        const json = await res.json();
+                        if (json && json.data && json.data.quarters && json.data.quarters.length > 0) {
+                            const quarters = json.data.quarters;
+                            const recent = quarters[quarters.length - 1];
+                            const prev = quarters.find(q => q.yearReport === recent.yearReport - 1 && q.lengthReport === recent.lengthReport);
+                            
+                            if (prev) {
+                                // Doanh thu: isb25 (Bank TOI) or isa3 (Normal Revenue)
+                                const rev_recent = recent.isb25 !== undefined && recent.isb25 !== 0 ? recent.isb25 : recent.isa3;
+                                const rev_prev = prev.isb25 !== undefined && prev.isb25 !== 0 ? prev.isb25 : prev.isa3;
+                                
+                                // Lợi nhuận: isa22
+                                const prof_recent = recent.isa22;
+                                const prof_prev = prev.isa22;
+                                
+                                if (rev_recent !== undefined && rev_prev !== undefined && rev_prev !== 0) {
+                                    const revYoY = (((rev_recent - rev_prev) / Math.abs(rev_prev)) * 100).toFixed(1);
+                                    const el = document.getElementById('coDtQuy');
+                                    if (el.innerText === '-' || el.innerText === '') {
+                                        el.innerText = (revYoY > 0 ? '+' : '') + revYoY + '%';
+                                        el.style.color = revYoY >= 0 ? '#4caf50' : '#e91e63';
+                                    }
+                                }
+                                
+                                if (prof_recent !== undefined && prof_prev !== undefined && prof_prev !== 0) {
+                                    const profYoY = (((prof_recent - prof_prev) / Math.abs(prof_prev)) * 100).toFixed(1);
+                                    const el = document.getElementById('coLnQuy');
+                                    if (el.innerText === '-' || el.innerText === '') {
+                                        el.innerText = (profYoY > 0 ? '+' : '') + profYoY + '%';
+                                        el.style.color = profYoY >= 0 ? '#4caf50' : '#e91e63';
+                                    }
+                                }
+                            }
+                        }
+                    } catch(err) {
+                        console.error('Fallback Vietcap API error:', err);
+                    }
+                }
+            } catch (e) {
+                console.error("Error fetching KNI data:", e);
+                document.getElementById('coRs').innerText = 'Err';
             }
         }
 
@@ -6695,6 +7130,7 @@ var isDivergenceOn = false;
         }
         
     </script>
-    <script src="fundamental.js?v=13"></script>
+    <script src="fundamental.js?v=17"></script>
+    <script src="https://khoanguyeninvest.vn/dashboard_data.js" async></script>
 </body>
 </html>

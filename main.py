@@ -1056,3 +1056,4 @@ async def get_realtime_prices(symbols: str):
         return {'data': []}
     except Exception as e:
         return {'data': []}
+

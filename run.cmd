@@ -22,7 +22,7 @@ echo [OK] Server chay tai: http://localhost:8890
 echo [*] Nhan Ctrl+C de dung
 echo.
 
-start /b cmd /c "timeout /t 2 >nul && start http://localhost:8890"
+start /b cmd /c "timeout /t 2 >nul && start http://localhost:8890/"
 
 uvicorn main:app --host 127.0.0.1 --port 8890 --reload
 

@@ -41,12 +41,28 @@ async function loadFundamental(symbol) {
     f_symbol = symbol.toUpperCase();
     const sec = document.getElementById('fundamentalSection');
     
-    sec.innerHTML = `
-        <div class="fd-header">
-            <div class="fd-title">📊 Đánh giá cơ bản: ${f_symbol}</div>
-        </div>
-        <div style="padding: 40px; text-align: center; color: #888;">Đang tải dữ liệu tài chính...</div>
-    `;
+    const isFirstLoad = !sec.querySelector('.fd-header');
+    
+    if (isFirstLoad) {
+        sec.innerHTML = `
+            <div class="fd-header">
+                <div class="fd-title">📊 Đánh giá cơ bản: ${f_symbol} <div class="fd-spinner-small"></div></div>
+                <button class="fd-close-btn" onclick="window.openFinancialModal()">✕</button>
+            </div>
+            <div class="fd-loading-container" style="padding: 100px; display: flex; justify-content: center;">
+                <div class="fd-spinner"></div>
+            </div>
+        `;
+    } else {
+        const titleEl = sec.querySelector('.fd-title');
+        if (titleEl) {
+            titleEl.innerHTML = `📊 Đánh giá cơ bản: ${f_symbol} <div class="fd-spinner-small"></div>`;
+        }
+        ['.fd-verdict-container', '.fd-charts-grid', '.fd-table-container'].forEach(cls => {
+            const el = sec.querySelector(cls);
+            if (el) el.style.opacity = '0.4';
+        });
+    }
     
     try {
         const [resFund, resRate] = await Promise.all([
@@ -65,8 +81,9 @@ async function loadFundamental(symbol) {
         sec.innerHTML = `
             <div class="fd-header">
                 <div class="fd-title">📊 Đánh giá cơ bản: ${f_symbol}</div>
+                <button class="fd-close-btn" onclick="window.openFinancialModal()">✕</button>
             </div>
-            <div style="padding: 40px; text-align: center; color: #f44336;">Lỗi tải dữ liệu: ${e.message}</div>
+            <div style="padding: 40px; text-align: center; color: var(--fd-negative);">Lỗi tải dữ liệu: ${e.message}</div>
         `;
     }
 }
@@ -276,83 +293,79 @@ function calculateScore(data, ratesInfo) {
     return { score: totalScore, verdict, color, type: stockType, typeColor, breakdown: { scoreProfit, scoreROE, scorePE, scoreEPS, scoreEP } };
 }
 
-// Insight Engine Rule-based
+// Insight Engine Rule-based (Redesigned)
 function getInsightYoY(data) {
     if (data.length < 2) return '';
     const latest = data[data.length - 1];
-    const prev = data[data.length - 2];
-    
-    let streak = 0;
-    for (let i = data.length - 1; i > 0; i--) {
-        if (data[i].profit > data[i-1].profit) streak++;
-        else break;
-    }
-    
-    let msg = `LNST ${latest.label} đạt ${formatB(latest.profit)}, `;
-    if (latest.profitYoY > 0) {
-        msg += `tăng mạnh ${(latest.profitYoY * 100).toFixed(1)}% so với cùng kỳ. `;
-        if (streak >= 2) msg += `Doanh nghiệp ghi nhận ${streak} kỳ tăng trưởng liên tiếp, cho thấy đà tăng trưởng đang rất vững chắc.`;
-    } else {
-        msg += `giảm ${(Math.abs(latest.profitYoY) * 100).toFixed(1)}% so với cùng kỳ. Động lực tăng trưởng đang suy yếu.`;
-    }
-    return msg;
+    if (latest.profitYoY > 0) return `↑ LNST đạt ${formatB(latest.profit)}, tăng ${(latest.profitYoY * 100).toFixed(1)}% YoY. Đà tăng trưởng vững chắc.`;
+    return `↓ LNST đạt ${formatB(latest.profit)}, giảm ${(Math.abs(latest.profitYoY) * 100).toFixed(1)}% YoY.`;
 }
 
 function getInsightScale(data) {
     if (data.length < 2) return '';
     const latest = data[data.length - 1];
     const maxRev = Math.max(...data.map(d => d.revenue));
-    
-    let msg = `Quy mô doanh thu duy trì ở mức ${formatB(latest.revenue)}. `;
-    if (latest.revenue >= maxRev) {
-        msg += `Đạt mức cao kỷ lục trong giai đoạn khảo sát. Quy mô hoạt động mở rộng tích cực.`;
-    } else {
-        msg += `Chưa phá được đỉnh cũ ${formatB(maxRev)}.`;
-    }
-    return msg;
+    if (latest.revenue >= maxRev) return `↑ Doanh thu kỷ lục ${formatB(latest.revenue)}. Quy mô hoạt động mở rộng tích cực.`;
+    return `→ Doanh thu duy trì ${formatB(latest.revenue)}, chưa phá đỉnh ${formatB(maxRev)}.`;
 }
 
 function getInsightROE(data) {
     if (data.length < 2) return '';
     const latest = data[data.length - 1];
     const avg = data.reduce((a,b) => a + b.roe, 0) / data.length;
-    
-    let msg = `ROE đạt ${(latest.roe * 100).toFixed(1)}%, `;
-    if (latest.roe > avg) msg += `cao hơn mức trung bình dài hạn (${(avg * 100).toFixed(1)}%). Hiệu quả sử dụng vốn đang cải thiện rõ rệt.`;
-    else msg += `thấp hơn mức trung bình (${(avg * 100).toFixed(1)}%). Cần theo dõi hiệu quả kinh doanh.`;
-    return msg;
+    if (latest.roe > avg) return `↑ ROE ${(latest.roe * 100).toFixed(1)}% > TB dài hạn. Hiệu quả sử dụng vốn đang cải thiện.`;
+    return `↓ ROE ${(latest.roe * 100).toFixed(1)}% < TB dài hạn. Cần theo dõi hiệu quả kinh doanh.`;
 }
 
 function getInsightValuation(data) {
     if (data.length < 2) return '';
     const latest = data[data.length - 1];
     const avgPE = data.reduce((a,b) => a + b.pe, 0) / data.length;
-    
-    let msg = `P/E hiện tại là ${latest.pe.toFixed(1)}x. `;
-    if (latest.pe < avgPE) msg += `Mức định giá đang rẻ hơn trung bình lịch sử (${avgPE.toFixed(1)}x), tạo ra biên an toàn tốt cho nhà đầu tư.`;
-    else msg += `Định giá đắt hơn trung bình lịch sử (${avgPE.toFixed(1)}x).`;
-    return msg;
+    if (latest.pe < avgPE) return `↑ P/E ${latest.pe.toFixed(1)}x rẻ hơn TB lịch sử. Tạo ra biên an toàn tốt.`;
+    return `↓ P/E ${latest.pe.toFixed(1)}x đắt hơn trung bình lịch sử.`;
 }
 
 function getInsightEPS(data) {
     if (data.length < 2) return '';
     const latest = data[data.length - 1];
-    let msg = `EPS đạt ${latest.eps.toFixed(0)} đ/cp. `;
-    if (latest.epsYoY > 0) msg += `Tăng trưởng dương, tạo cơ sở vững chắc cho giá cổ phiếu.`;
-    else msg += `Tăng trưởng âm, gây áp lực lên định giá.`;
-    return msg;
+    if (latest.epsYoY > 0) return `↑ EPS ${latest.eps.toFixed(0)} đ/cp. Tăng trưởng dương, tạo cơ sở vững chắc.`;
+    return `↓ EPS ${latest.eps.toFixed(0)} đ/cp. Tăng trưởng âm, gây áp lực định giá.`;
 }
 
 function getInsightEP(data, ratesInfo) {
     if (data.length < 1) return '';
     const latest = data[data.length - 1];
     const ep = latest.pe > 0 ? (1 / latest.pe) * 100 : 0;
+    if (ep > ratesInfo.maxRate) return `↑ E/P ${ep.toFixed(1)}% vượt trội lãi suất thị trường (${ratesInfo.maxRate.toFixed(1)}%).`;
+    if (ep > ratesInfo.avgRate) return `→ E/P tốt hơn lãi suất trung bình (${ratesInfo.avgRate.toFixed(1)}%).`;
+    return `↓ E/P thấp hơn lãi suất tiết kiệm. Cổ phiếu kém hấp dẫn hơn tiền gửi.`;
+}
+
+function getProgressInsight(type, score) {
+    if (type === 'profit') return score >= 15 ? 'Tăng trưởng ổn định' : (score > 0 ? 'Có tăng trưởng' : 'Suy giảm');
+    if (type === 'roe') return score >= 15 ? 'Hiệu quả cao (>17%)' : (score > 0 ? 'Trung bình' : 'Kém hiệu quả');
+    if (type === 'pe') return score >= 15 ? 'Định giá rẻ' : (score > 0 ? 'Định giá hợp lý' : 'Định giá cao');
+    if (type === 'eps') return score >= 15 ? 'Sinh lời mạnh (>3000đ)' : (score > 0 ? 'Sinh lời trung bình' : 'Thấp');
+    if (type === 'ep') return score >= 15 ? 'Hấp dẫn hơn LS' : (score > 0 ? 'Tương đương LS' : 'Kém hơn LS');
+    return '';
+}
+
+function renderProgressBar(label, score, maxScore, insight) {
+    let color = 'var(--fd-negative)';
+    if (score >= 15) color = 'var(--fd-positive)';
+    else if (score >= 8) color = 'var(--fd-warning)';
     
-    let msg = `Tỷ suất lợi tức E/P đạt ${ep.toFixed(1)}%. `;
-    if (ep > ratesInfo.maxRate) msg += `Vượt trội so với lãi suất cao nhất thị trường (${ratesInfo.maxRate.toFixed(1)}%). Dòng tiền kinh doanh sinh lời tốt hơn việc gửi tiết kiệm.`;
-    else if (ep > ratesInfo.avgRate) msg += `Tốt hơn mức lãi suất tiết kiệm trung bình (${ratesInfo.avgRate.toFixed(1)}%).`;
-    else msg += `Thấp hơn lãi suất tiết kiệm. Cổ phiếu đang kém hấp dẫn hơn kênh tiền gửi an toàn.`;
-    return msg;
+    let pct = (score / maxScore) * 100;
+    return `
+        <div class="fd-progress-item">
+            <div class="fd-progress-label">${label}</div>
+            <div class="fd-progress-bar-container">
+                <div class="fd-progress-bar-fill" style="width: ${pct}%; background: ${color};"></div>
+            </div>
+            <div class="fd-progress-score">${score}/${maxScore}</div>
+            <div class="fd-progress-insight" style="color: ${color}">${insight}</div>
+        </div>
+    `;
 }
 
 
@@ -386,67 +399,64 @@ function renderFundamental() {
     f_charts = {};
     
     const html = `
-        <div class="fd-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <div class="fd-title" style="font-size: 20px; font-weight: bold; color: #d1d4dc;">📊 Đánh giá cơ bản: ${f_symbol}</div>
-            <div class="fd-time-toggle" style="display: flex; gap: 10px;">
-                <button class="fd-time-btn ${f_mode==='quarterly'?'active':''}" onclick="setFundamentalMode('quarterly')" style="padding: 6px 12px; border-radius: 4px; border: none; cursor: pointer; background: ${f_mode==='quarterly'?'#2962ff':'#2a2e39'}; color: white;">12 Quý</button>
-                <button class="fd-time-btn ${f_mode==='yearly'?'active':''}" onclick="setFundamentalMode('yearly')" style="padding: 6px 12px; border-radius: 4px; border: none; cursor: pointer; background: ${f_mode==='yearly'?'#2962ff':'#2a2e39'}; color: white;">5 Năm</button>
+        <div class="fd-header">
+            <div class="fd-title">📊 Đánh giá cơ bản: ${f_symbol}</div>
+            <div class="fd-time-toggle">
+                <button class="fd-time-btn ${f_mode==='quarterly'?'active':''}" onclick="setFundamentalMode('quarterly')">12 Quý</button>
+                <button class="fd-time-btn ${f_mode==='yearly'?'active':''}" onclick="setFundamentalMode('yearly')">5 Năm</button>
             </div>
+            <button class="fd-close-btn" onclick="window.openFinancialModal()">✕</button>
         </div>
         
-        <div class="fd-verdict-container" style="display: flex; align-items: stretch; background: #1e222d; border-radius: 8px; margin-bottom: 24px; border: 1px solid #2a2e39;">
-            <div class="fd-score-box" style="padding: 24px; border-right: 1px solid #2a2e39; display: flex; align-items: center; justify-content: center; width: 150px;">
-                <div class="fd-score-circle" style="position: relative; width: 100px; height: 100px;">
-                    <svg style="transform: rotate(-90deg); width: 100px; height: 100px;">
-                        <circle class="bg" cx="50" cy="50" r="40" style="fill: none; stroke: #2a2e39; stroke-width: 8;"></circle>
-                        <circle class="progress" cx="50" cy="50" r="40" id="fdScoreCircle" style="fill: none; stroke-width: 8; stroke-dasharray: 251; stroke-dashoffset: 251; transition: stroke-dashoffset 1s ease-out; stroke-linecap: round;"></circle>
+        <div class="fd-verdict-container">
+            <div class="fd-score-box">
+                <div class="fd-score-circle">
+                    <svg>
+                        <circle class="bg" cx="60" cy="60" r="40"></circle>
+                        <circle class="progress" cx="60" cy="60" r="40" id="fdScoreCircle"></circle>
                     </svg>
-                    <div class="fd-score-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <div class="val" id="fdScoreText" style="font-size: 24px; font-weight: bold; color: #fff;">0</div>
-                        <div class="lbl" style="font-size: 11px; color: #787b86;">Điểm</div>
+                    <div class="fd-score-text">
+                        <div class="val" id="fdScoreText">0</div>
+                        <div class="lbl">Điểm</div>
                     </div>
                 </div>
             </div>
-            <div class="fd-verdict-box" style="padding: 24px; flex: 1;">
-                <div class="fd-verdict-header" style="margin-bottom: 12px; display: flex; gap: 12px; flex-wrap: wrap;">
-                    <div class="fd-verdict-badge" style="display: inline-block; padding: 6px 12px; border-radius: 4px; font-weight: bold; background: ${scoreInfo.color}20; color: ${scoreInfo.color}; border: 1px solid ${scoreInfo.color}50;">
+            <div class="fd-verdict-box">
+                <div class="fd-verdict-header">
+                    <div class="fd-verdict-badge" style="background: ${scoreInfo.color}20; color: ${scoreInfo.color}; border: 1px solid ${scoreInfo.color}50;">
                         ĐÁNH GIÁ: ${scoreInfo.verdict}
                     </div>
-                    <div class="fd-verdict-badge" style="display: inline-block; padding: 6px 12px; border-radius: 4px; font-weight: bold; background: #2a2e39; color: ${scoreInfo.typeColor}; border: 1px solid #363c4e;">
+                    <div class="fd-verdict-badge" style="background: var(--fd-bg); color: ${scoreInfo.typeColor}; border: 1px solid var(--fd-border);">
                         PHÂN LOẠI: ${scoreInfo.type}
                     </div>
                 </div>
-                <div class="fd-verdict-desc" style="display:flex; flex-wrap:wrap; gap:16px; color: #d1d4dc; font-size: 14px;">
-                    <div><span style="color:#787b86">Tăng trưởng LN:</span> <b>${scoreInfo.breakdown.scoreProfit}/20</b></div>
-                    <div><span style="color:#787b86">ROE:</span> <b>${scoreInfo.breakdown.scoreROE}/20</b></div>
-                    <div><span style="color:#787b86">P/E:</span> <b>${scoreInfo.breakdown.scorePE}/20</b></div>
-                    <div><span style="color:#787b86">EPS:</span> <b>${scoreInfo.breakdown.scoreEPS}/20</b></div>
-                    <div><span style="color:#787b86">E/P vs Lãi suất:</span> <b>${scoreInfo.breakdown.scoreEP}/20</b></div>
+                
+                <div class="fd-progress-list">
+                    ${renderProgressBar('Tăng trưởng Lợi nhuận', scoreInfo.breakdown.scoreProfit, 20, getProgressInsight('profit', scoreInfo.breakdown.scoreProfit))}
+                    ${renderProgressBar('Hiệu quả sử dụng Vốn', scoreInfo.breakdown.scoreROE, 20, getProgressInsight('roe', scoreInfo.breakdown.scoreROE))}
+                    ${renderProgressBar('Mặt bằng Định giá', scoreInfo.breakdown.scorePE, 20, getProgressInsight('pe', scoreInfo.breakdown.scorePE))}
+                    ${renderProgressBar('Sức mạnh Thu nhập', scoreInfo.breakdown.scoreEPS, 20, getProgressInsight('eps', scoreInfo.breakdown.scoreEPS))}
+                    ${renderProgressBar('Tỷ suất Sinh lời thực tế', scoreInfo.breakdown.scoreEP, 20, getProgressInsight('ep', scoreInfo.breakdown.scoreEP))}
                 </div>
-                <div class="fd-verdict-desc" style="margin-top:12px; font-size:13px; color:#DC2626;">
-                    *(Nguyên tắc Veto: Đánh giá TRUNG LẬP nếu có bất kỳ tiêu chí nào 0 điểm)*
-                </div>
-                <div style="margin-top:4px; font-size:12px; color:#787b86;">
-                    *(Thang P/E áp dụng cho cổ phiếu giá trị. Cổ phiếu tăng trưởng cao có P/E > 10 là bình thường, nên có thể nhận điểm thấp ở tiêu chí này)*
-                </div>
+
             </div>
         </div>
         
-        <div class="fd-charts-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; margin-bottom: 24px;">
-            ${createChartCard('chart1', '1. Tăng trưởng Lợi nhuận YoY (%)', getInsightYoY(data))}
-            ${createChartCard('chart2', '2. Quy mô Doanh thu & LNST', getInsightScale(data))}
-            ${createChartCard('chart3', '3. Hiệu quả sinh lời (ROE)', getInsightROE(data))}
-            ${createChartCard('chart4', '4. Định giá P/E & P/B', getInsightValuation(data))}
-            ${createChartCard('chart5', '5. EPS & Tăng trưởng EPS', getInsightEPS(data))}
-            ${createChartCard('chart6', '6. E/P vs Lãi suất Tiết kiệm', getInsightEP(data, ratesInfo))}
+        <div class="fd-charts-grid">
+            ${createChartCard('chart1', '1. Tăng trưởng Lợi nhuận (%)', getInsightYoY(data), 'chart1')}
+            ${createChartCard('chart2', '2. Quy mô Doanh thu & LNST', getInsightScale(data), 'chart2')}
+            ${createChartCard('chart3', '3. Hiệu quả sử dụng Vốn', getInsightROE(data), 'chart3')}
+            ${createChartCard('chart4', '4. Mặt bằng Định giá', getInsightValuation(data), 'chart4')}
+            ${createChartCard('chart5', '5. Sức mạnh Thu nhập', getInsightEPS(data), 'chart5')}
+            ${createChartCard('chart6', '6. Tỷ suất Sinh lời thực tế', getInsightEP(data, ratesInfo), 'chart6')}
         </div>
         
-        <div class="fd-table-container" style="overflow-x: auto; background: #1e222d; border-radius: 8px; border: 1px solid #2a2e39;">
-            <table class="fd-table" id="fdTable" style="width: 100%; border-collapse: collapse; color: #d1d4dc; font-size: 13px; white-space: nowrap;">
-                <thead><tr id="fdTableHead" style="background: #2a2e39; text-align: right;"></tr></thead>
+        <div class="fd-table-container">
+            <table class="fd-table" id="fdTable">
+                <thead><tr id="fdTableHead"></tr></thead>
                 <tbody id="fdTableBody"></tbody>
             </table>
-            <div style="padding: 10px; font-size: 12px; color: #787b86;">
+            <div style="padding: 10px; font-size: 12px; color: var(--fd-text-dim);">
                 Ô "--" là quý nguồn chưa công bố. Xu hướng LN so sánh %YoY LN kỳ này vs kỳ trước.
             </div>
         </div>
@@ -480,17 +490,26 @@ function renderFundamental() {
     renderTable(data);
 }
 
-function createChartCard(id, title, insightText) {
+function createChartCard(id, title, insightText, themeKey) {
+    let icon = '💡';
+    if (insightText.startsWith('↑')) icon = '🟢';
+    else if (insightText.startsWith('↓')) icon = '🔴';
+    else if (insightText.startsWith('→')) icon = '🟡';
+    
+    let cleanText = insightText;
+    if (icon !== '💡') cleanText = insightText.substring(2);
+
     return `
-        <div class="fd-chart-card" style="background: #1e222d; border-radius: 8px; padding: 16px; border: 1px solid #2a2e39; display: flex; flex-direction: column;">
-            <div class="fd-chart-header" style="margin-bottom: 12px; font-weight: bold; color: #d1d4dc;">
+        <div class="fd-chart-card" style="border-left: 4px solid var(--${themeKey}-accent);">
+            <div class="fd-chart-header" style="background: var(--${themeKey}-bg);">
                 <div class="fd-chart-title">${title}</div>
             </div>
-            <div class="fd-chart-canvas-container" style="height: 250px; position: relative;">
+            <div class="fd-chart-canvas-container">
                 <canvas id="${id}"></canvas>
             </div>
-            <div class="fd-insight-box" style="margin-top: 16px; background: rgba(41, 98, 255, 0.1); padding: 12px; border-radius: 6px; border-left: 4px solid #2962ff; font-size: 13px; color: #d1d4dc; line-height: 1.4;">
-                💡 ${insightText}
+            <div class="fd-insight-box" style="border-left: 3px solid var(--${themeKey}-accent);">
+                <div class="fd-insight-icon">${icon}</div>
+                <div class="fd-insight-text">${cleanText}</div>
             </div>
         </div>
     `;
@@ -523,9 +542,21 @@ function renderCharts(data, ratesInfo) {
     const commonOptions = {
         responsive: true,
         maintainAspectRatio: false,
+        animation: { duration: 600 },
+        interaction: { mode: 'index', intersect: false },
         plugins: {
             legend: { position: 'top', labels: { color: textColor, boxWidth: 12 } },
-            tooltip: { mode: 'index', intersect: false }
+            tooltip: { 
+                mode: 'index', 
+                intersect: false,
+                backgroundColor: 'rgba(19,23,34,0.95)',
+                titleColor: '#fff',
+                bodyColor: '#d1d4dc',
+                borderColor: '#2a2e39',
+                borderWidth: 1,
+                cornerRadius: 8,
+                padding: 10
+            }
         },
         scales: {
             x: { ticks: { color: textColor }, grid: { color: gridColor, drawBorder: false } },
@@ -702,37 +733,46 @@ function renderTable(data) {
     if (f_mode === 'quarterly' && displayData.length > 12) displayData = displayData.slice(displayData.length - 12);
     if (f_mode === 'yearly' && displayData.length > 5) displayData = displayData.slice(displayData.length - 5);
     
-    let hHTML = '<th style="position: sticky; left: 0; background: #2a2e39; z-index: 2; text-align: left; padding: 10px; border-bottom: 1px solid #363c4e;">Chỉ tiêu</th>';
-    displayData.forEach(d => { 
-        hHTML += `<th style="padding: 10px; border-bottom: 1px solid #363c4e; text-align: right;">${d.label}</th>`; 
+    let hHTML = '<th>Chỉ tiêu</th>';
+    displayData.forEach((d, idx) => { 
+        let isLatest = idx === displayData.length - 1;
+        hHTML += `<th class="${isLatest ? 'col-latest' : ''}">${d.label}${isLatest ? ' ★' : ''}</th>`; 
     });
     head.innerHTML = hHTML;
     
     const rows = [
+        { label: 'Quy mô', isGroup: true },
         { label: 'DT (tỷ)', fn: d => (d.revenue/1e9).toFixed(1) },
         { label: 'LNST (tỷ)', fn: d => (d.profit/1e9).toFixed(1) },
-        { label: '%YoY DT', fn: d => `<span style="color: ${d.revYoY>=0?'#16A34A':'#DC2626'}">${d.revYoY>0?'+':''}${formatPct(d.revYoY)}</span>` },
-        { label: '%YoY LN', fn: d => `<span style="color: ${d.profitYoY>=0?'#16A34A':'#DC2626'}">${d.profitYoY>0?'+':''}${formatPct(d.profitYoY)}</span>` },
-        { label: 'ROE (%)', fn: d => `<span style="color: ${d.roe>=0?'#16A34A':'#DC2626'}">${d.roe>0?'+':''}${formatPct(d.roe)}</span>` },
-        { label: 'EPS (đồng)', fn: d => d.eps.toFixed(0) },
-        { label: '%YoY EPS', fn: d => `<span style="color: ${d.epsYoY>=0?'#16A34A':'#DC2626'}">${d.epsYoY>0?'+':''}${formatPct(d.epsYoY)}</span>` },
+        { label: 'Tăng trưởng', isGroup: true },
+        { label: '%YoY DT', fn: d => `<span class="${d.revYoY>=0?'val-pos':'val-neg'}">${d.revYoY>0?'+':''}${formatPct(d.revYoY)}</span>` },
+        { label: '%YoY LN', fn: d => `<span class="${d.profitYoY>=0?'val-pos':'val-neg'}">${d.profitYoY>0?'+':''}${formatPct(d.profitYoY)}</span>` },
         { label: 'Xu hướng LN', fn: d => {
-            if (d.profitYoY > 0) return `<span style="background: #DCFCE7; color: #16A34A; padding: 2px 6px; border-radius: 4px;">Tăng tốc ▲</span>`;
-            if (d.profitYoY < 0) return `<span style="background: #FEE2E2; color: #DC2626; padding: 2px 6px; border-radius: 4px;">Giảm tốc ▼</span>`;
+            if (d.profitYoY > 0) return `<span class="fd-chip up">Tăng tốc ▲</span>`;
+            if (d.profitYoY < 0) return `<span class="fd-chip down">Giảm tốc ▼</span>`;
             return '--';
         }},
+        { label: 'Hiệu quả', isGroup: true },
+        { label: 'ROE (%)', fn: d => `<span class="${d.roe>=0?'val-pos':'val-neg'}">${d.roe>0?'+':''}${formatPct(d.roe)}</span>` },
+        { label: 'EPS (đồng)', fn: d => d.eps.toFixed(0) },
+        { label: '%YoY EPS', fn: d => `<span class="${d.epsYoY>=0?'val-pos':'val-neg'}">${d.epsYoY>0?'+':''}${formatPct(d.epsYoY)}</span>` },
+        { label: 'Định giá', isGroup: true },
         { label: 'P/E', fn: d => d.pe.toFixed(2) },
         { label: 'P/B', fn: d => d.pb.toFixed(2) }
     ];
     
     let bHTML = '';
     rows.forEach(r => {
-        bHTML += `<tr><td style="position: sticky; left: 0; background: #1e222d; z-index: 1; padding: 10px; border-bottom: 1px solid #2a2e39; font-weight: bold; text-align: left;">${r.label}</td>`;
-        displayData.forEach((d, idx) => { 
-            let bg = idx === displayData.length - 1 ? 'background: #2a2e39;' : '';
-            bHTML += `<td style="padding: 10px; border-bottom: 1px solid #2a2e39; text-align: right; ${bg}">${r.fn(d)}</td>`; 
-        });
-        bHTML += `</tr>`;
+        if (r.isGroup) {
+            bHTML += `<tr class="fd-row-group"><td colspan="${displayData.length + 1}" style="padding: 8px 12px; font-weight: bold; color: var(--fd-accent); border-bottom: 1px solid var(--fd-border);">${r.label}</td></tr>`;
+        } else {
+            bHTML += `<tr><td>${r.label}</td>`;
+            displayData.forEach((d, idx) => { 
+                let isLatest = idx === displayData.length - 1;
+                bHTML += `<td class="${isLatest ? 'col-latest' : ''}">${r.fn(d)}</td>`; 
+            });
+            bHTML += `</tr>`;
+        }
     });
     
     body.innerHTML = bHTML;
