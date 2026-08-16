@@ -1,0 +1,912 @@
+[
+  {
+    "name": "0001",
+    "viSector": "Dầu khí (0001 - Cấp 1)",
+    "icbLevel": 1
+  },
+  {
+    "name": "0500",
+    "viSector": "Dầu khí (0500 - Cấp 2)",
+    "icbLevel": 2
+  },
+  {
+    "name": "0530",
+    "viSector": "Sản xuất Dầu khí (0530 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "0533",
+    "viSector": "Sản xuất và Khai thác dầu khí (0533 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "0537",
+    "viSector": "Tổ hợp Dầu khí (0537 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "0570",
+    "viSector": "Thiết bị, Dịch vụ và Phân phối Dầu khí (0570 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "0573",
+    "viSector": "Thiết bị và Dịch vụ Dầu khí (0573 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "0577",
+    "viSector": "Ống dẫn Dầu (0577 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "0580",
+    "viSector": "Năng lượng thay thế (0580 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "0583",
+    "viSector": "Thiết bị năng lượng tái chế (0583 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "0587",
+    "viSector": "Nhiên liệu thay thế (0587 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "1000",
+    "viSector": "Nguyên vật liệu (1000 - Cấp 1)",
+    "icbLevel": 1
+  },
+  {
+    "name": "1300",
+    "viSector": "Hóa chất (1300 - Cấp 2)",
+    "icbLevel": 2
+  },
+  {
+    "name": "1350",
+    "viSector": "Hóa chất (1350 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "1353",
+    "viSector": "Nhựa, cao su & sợi (1353 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "1357",
+    "viSector": "Sản phẩm hóa dầu, Nông dược & Hóa chất khác (1357 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "1700",
+    "viSector": "Tài nguyên Cơ bản (1700 - Cấp 2)",
+    "icbLevel": 2
+  },
+  {
+    "name": "1730",
+    "viSector": "Lâm nghiệp và Giấy (1730 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "1733",
+    "viSector": "Lâm sản và Chế biến gỗ (1733 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "1737",
+    "viSector": "Sản xuất giấy (1737 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "1750",
+    "viSector": "Kim loại (1750 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "1753",
+    "viSector": "Nhôm (1753 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "1755",
+    "viSector": "Kim Loại màu (1755 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "1757",
+    "viSector": "Thép và sản phẩm thép (1757 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "1770",
+    "viSector": "Khai khoáng (1770 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "1771",
+    "viSector": "Khai thác Than (1771 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "1773",
+    "viSector": "Đá quý và Kim cương (1773 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "1775",
+    "viSector": "Khai khoáng  (1775 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "1777",
+    "viSector": "Khai thác vàng (1777 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "1779",
+    "viSector": "Bạch kim & Kim loại quý khác (1779 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "2000",
+    "viSector": "Công nghiệp (2000 - Cấp 1)",
+    "icbLevel": 1
+  },
+  {
+    "name": "2300",
+    "viSector": "Xây dựng và Vật liệu (2300 - Cấp 2)",
+    "icbLevel": 2
+  },
+  {
+    "name": "2350",
+    "viSector": "Xây dựng và Vật liệu (2350 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "2353",
+    "viSector": "Vật liệu xây dựng & Nội thất (2353 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "2357",
+    "viSector": "Xây dựng (2357 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "2700",
+    "viSector": "Hàng & Dịch vụ Công nghiệp (2700 - Cấp 2)",
+    "icbLevel": 2
+  },
+  {
+    "name": "2710",
+    "viSector": "Hàng không & Quốc phòng (2710 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "2713",
+    "viSector": "Hàng không (2713 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "2717",
+    "viSector": "Quốc phòng (2717 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "2720",
+    "viSector": "Hàng công nghiệp (2720 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "2723",
+    "viSector": "Containers & Đóng gói (2723 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "2727",
+    "viSector": "Công nghiệp phức hợp (2727 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "2730",
+    "viSector": "Điện tử & Thiết bị điện (2730 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "2733",
+    "viSector": "Hàng điện & điện tử (2733 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "2737",
+    "viSector": "Thiết bị điện (2737 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "2750",
+    "viSector": "Công nghiệp nặng (2750 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "2753",
+    "viSector": "Xe tải & Đóng tàu (2753 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "2757",
+    "viSector": "Máy công nghiệp (2757 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "2770",
+    "viSector": "Vận tải (2770 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "2771",
+    "viSector": "Chuyển phát nhanh (2771 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "2773",
+    "viSector": "Vận tải Thủy (2773 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "2775",
+    "viSector": "Đường sắt (2775 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "2777",
+    "viSector": "Kho bãi, hậu cần và bảo dưỡng (2777 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "2779",
+    "viSector": "Dịch vụ vận tải (2779 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "2790",
+    "viSector": "Tư vấn & Hỗ trợ Kinh doanh (2790 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "2791",
+    "viSector": "Tư vấn & Hỗ trợ KD (2791 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "2793",
+    "viSector": "Đào tạo & Việc làm (2793 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "2795",
+    "viSector": "Quản lý Tài chính (2795 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "2797",
+    "viSector": "Nhà cung cấp thiết bị (2797 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "2799",
+    "viSector": "Chất thải & Môi trường (2799 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "3000",
+    "viSector": "Hàng Tiêu dùng (3000 - Cấp 1)",
+    "icbLevel": 1
+  },
+  {
+    "name": "3300",
+    "viSector": "Ô tô và phụ tùng (3300 - Cấp 2)",
+    "icbLevel": 2
+  },
+  {
+    "name": "3350",
+    "viSector": "Ô tô và phụ tùng (3350 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "3353",
+    "viSector": "Sản xuất ô tô (3353 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "3355",
+    "viSector": "Phụ tùng ô tô (3355 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "3357",
+    "viSector": "Lốp xe (3357 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "3500",
+    "viSector": "Thực phẩm và đồ uống (3500 - Cấp 2)",
+    "icbLevel": 2
+  },
+  {
+    "name": "3530",
+    "viSector": "Bia và đồ uống (3530 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "3533",
+    "viSector": "Sản xuất bia  (3533 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "3535",
+    "viSector": "Vang & Rượu mạnh (3535 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "3537",
+    "viSector": "Đồ uống & giải khát (3537 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "3570",
+    "viSector": "Sản xuất thực phẩm (3570 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "3573",
+    "viSector": "Nuôi trồng nông & hải sản (3573 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "3577",
+    "viSector": "Thực phẩm (3577 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "3700",
+    "viSector": "Hàng cá nhân & Gia dụng (3700 - Cấp 2)",
+    "icbLevel": 2
+  },
+  {
+    "name": "3720",
+    "viSector": "Hàng gia dụng (3720 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "3722",
+    "viSector": "Đồ gia dụng lâu bền (3722 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "3724",
+    "viSector": "Đồ gia dụng một lần (3724 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "3726",
+    "viSector": "Thiết bị gia dụng (3726 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "3728",
+    "viSector": "Xây nhà (3728 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "3740",
+    "viSector": "Hàng hóa giải trí (3740 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "3743",
+    "viSector": "Điện tử tiêu dùng (3743 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "3745",
+    "viSector": "Sản phẩm nghệ thuật (3745 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "3747",
+    "viSector": "Đồ chơi (3747 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "3760",
+    "viSector": "Hàng cá nhân (3760 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "3763",
+    "viSector": "Hàng May mặc (3763 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "3765",
+    "viSector": "Giầy dép (3765 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "3767",
+    "viSector": "Hàng cá nhân (3767 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "3780",
+    "viSector": "Thuốc lá (3780 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "3785",
+    "viSector": "Thuốc lá (3785 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "4000",
+    "viSector": "Dược phẩm và Y tế (4000 - Cấp 1)",
+    "icbLevel": 1
+  },
+  {
+    "name": "4500",
+    "viSector": "Y tế (4500 - Cấp 2)",
+    "icbLevel": 2
+  },
+  {
+    "name": "4530",
+    "viSector": "Thiết bị và Dịch vụ Y tế (4530 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "4533",
+    "viSector": "Chăm sóc y tế (4533 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "4535",
+    "viSector": "Thiết bị y tế (4535 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "4537",
+    "viSector": "Dụng cụ y tế (4537 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "4570",
+    "viSector": "Dược phẩm (4570 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "4573",
+    "viSector": "Công nghệ sinh học (4573 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "4577",
+    "viSector": "Dược phẩm (4577 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "5000",
+    "viSector": "Dịch vụ Tiêu dùng (5000 - Cấp 1)",
+    "icbLevel": 1
+  },
+  {
+    "name": "5300",
+    "viSector": "Bán lẻ (5300 - Cấp 2)",
+    "icbLevel": 2
+  },
+  {
+    "name": "5330",
+    "viSector": "Phân phối thực phẩm & dược phẩm (5330 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "5333",
+    "viSector": "Phân phối dược phẩm (5333 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "5337",
+    "viSector": "Phân phối thực phẩm (5337 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "5370",
+    "viSector": "Bán lẻ (5370 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "5371",
+    "viSector": "Bán lẻ hàng may mặc (5371 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "5373",
+    "viSector": "Bán lẻ phức hợp (5373 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "5375",
+    "viSector": "Phân phối nội thất (5375 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "5377",
+    "viSector": "Dịch vụ tiêu dùng chuyên ngành (5377 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "5379",
+    "viSector": "Phân phối hàng chuyên dụng (5379 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "5500",
+    "viSector": "Truyền thông (5500 - Cấp 2)",
+    "icbLevel": 2
+  },
+  {
+    "name": "5550",
+    "viSector": "Truyền thông (5550 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "5553",
+    "viSector": "Giải trí & Truyền thông (5553 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "5555",
+    "viSector": "Dịch vụ truyền thông (5555 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "5557",
+    "viSector": "Sách, ấn bản & sản phẩm văn hóa (5557 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "5700",
+    "viSector": "Du lịch và Giải trí (5700 - Cấp 2)",
+    "icbLevel": 2
+  },
+  {
+    "name": "5750",
+    "viSector": "Du lịch & Giải trí (5750 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "5751",
+    "viSector": "Hàng không (5751 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "5752",
+    "viSector": "Gambling (5752 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "5753",
+    "viSector": "Khách sạn (5753 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "5755",
+    "viSector": "Dịch vụ giải trí (5755 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "5757",
+    "viSector": "Nhà hàng và quán bar (5757 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "5759",
+    "viSector": "Vận tải hành khách & Du lịch (5759 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "6000",
+    "viSector": "Viễn thông (6000 - Cấp 1)",
+    "icbLevel": 1
+  },
+  {
+    "name": "6500",
+    "viSector": "Viễn thông (6500 - Cấp 2)",
+    "icbLevel": 2
+  },
+  {
+    "name": "6530",
+    "viSector": "Viễn thông cố định (6530 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "6535",
+    "viSector": "Viễn thông cố định (6535 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "6570",
+    "viSector": "Viễn thông di động (6570 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "6575",
+    "viSector": "Viễn thông di động (6575 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "7000",
+    "viSector": "Tiện ích Cộng đồng (7000 - Cấp 1)",
+    "icbLevel": 1
+  },
+  {
+    "name": "7500",
+    "viSector": "Điện, nước & xăng dầu khí đốt (7500 - Cấp 2)",
+    "icbLevel": 2
+  },
+  {
+    "name": "7530",
+    "viSector": "Sản xuất & Phân phối Điện (7530 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "7535",
+    "viSector": "Sản xuất & Phân phối Điện (7535 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "7570",
+    "viSector": "Nước & Khí đốt (7570 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "7573",
+    "viSector": "Phân phối xăng dầu & khí đốt (7573 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "7575",
+    "viSector": "Tiện ích khác (7575 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "7577",
+    "viSector": "Nước (7577 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "8000",
+    "viSector": "Tài chính (8000 - Cấp 1)",
+    "icbLevel": 1
+  },
+  {
+    "name": "8300",
+    "viSector": "Ngân hàng (8300 - Cấp 2)",
+    "icbLevel": 2
+  },
+  {
+    "name": "8350",
+    "viSector": "Ngân hàng (8350 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "8355",
+    "viSector": "Ngân hàng (8355 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "8500",
+    "viSector": "Bảo hiểm (8500 - Cấp 2)",
+    "icbLevel": 2
+  },
+  {
+    "name": "8530",
+    "viSector": "Bảo hiểm phi nhân thọ (8530 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "8532",
+    "viSector": "Bảo hiểm phức hợp (8532 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "8534",
+    "viSector": "Môi giới bảo hiểm (8534 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "8536",
+    "viSector": "Bảo hiểm phi nhân thọ (8536 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "8538",
+    "viSector": "Tái bảo hiểm (8538 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "8570",
+    "viSector": "Bảo hiểm nhân thọ (8570 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "8575",
+    "viSector": "Bảo hiểm nhân thọ (8575 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "8580",
+    "viSector": "Công ty bảo hiểm (8580 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "8581",
+    "viSector": "Công ty bảo hiểm (8581 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "8600",
+    "viSector": "Bất động sản (8600 - Cấp 2)",
+    "icbLevel": 2
+  },
+  {
+    "name": "8630",
+    "viSector": "Bất động sản (8630 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "8633",
+    "viSector": "Bất động sản (8633 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "8637",
+    "viSector": "Tư Vấn, Định giá, Môi giới Bất động sản (8637 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "8670",
+    "viSector": "Quỹ ủy thác BĐS (8670 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "8677",
+    "viSector": "Quỹ ủy thác BĐS (8677 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "8700",
+    "viSector": "Dịch vụ tài chính (8700 - Cấp 2)",
+    "icbLevel": 2
+  },
+  {
+    "name": "8770",
+    "viSector": "Dịch vụ tài chính (8770 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "8771",
+    "viSector": "Quản lý tài sản (8771 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "8773",
+    "viSector": "Tài chính cá nhân (8773 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "8775",
+    "viSector": "Tài chính đặc biệt (8775 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "8777",
+    "viSector": "Môi giới chứng khoán (8777 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "8779",
+    "viSector": "Cầm cố (8779 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "8780",
+    "viSector": "Công ty Chứng khoán (8780 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "8781",
+    "viSector": "Công ty Chứng khoán (8781 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "8900",
+    "viSector": "Đầu tư chứng khoán/phi chứng khoán (8900 - Cấp 2)",
+    "icbLevel": 2
+  },
+  {
+    "name": "8980",
+    "viSector": "Quỹ đóng (8980 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "8985",
+    "viSector": "Quỹ đóng (8985 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "8990",
+    "viSector": "Quỹ mở (8990 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "8995",
+    "viSector": "Quỹ mở (8995 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "9000",
+    "viSector": "Công nghệ Thông tin (9000 - Cấp 1)",
+    "icbLevel": 1
+  },
+  {
+    "name": "9500",
+    "viSector": "Công nghệ Thông tin (9500 - Cấp 2)",
+    "icbLevel": 2
+  },
+  {
+    "name": "9530",
+    "viSector": "Phần mềm & Dịch vụ Máy tính (9530 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "9533",
+    "viSector": "Dịch vụ Máy tính (9533 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "9535",
+    "viSector": "Internet (9535 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "9537",
+    "viSector": "Phần mềm (9537 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "9570",
+    "viSector": "Thiết bị và Phần cứng (9570 - Cấp 3)",
+    "icbLevel": 3
+  },
+  {
+    "name": "9572",
+    "viSector": "Phần cứng (9572 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "9574",
+    "viSector": "Thiết bị văn phòng (9574 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "9576",
+    "viSector": "Bán dẫn (9576 - Cấp 4)",
+    "icbLevel": 4
+  },
+  {
+    "name": "9578",
+    "viSector": "Thiết bị viễn thông (9578 - Cấp 4)",
+    "icbLevel": 4
+  }
+]

@@ -1,0 +1,1721 @@
+{
+  "now": "2026-08-17T01:10:53.173158+07:00",
+  "result": [
+    {
+      "icbId": 1,
+      "icbCode": "0001",
+      "icbName": "Dầu khí (0001 - Cấp 1)",
+      "parentIcbId": 1,
+      "icbLevel": 1,
+      "numberOfSymbols": 20,
+      "childs": [
+        {
+          "icbId": 2,
+          "icbCode": "0500",
+          "icbName": "Dầu khí (0500 - Cấp 2)",
+          "parentIcbId": 1,
+          "icbLevel": 2,
+          "numberOfSymbols": 20,
+          "childs": [
+            {
+              "icbId": 3,
+              "icbCode": "0530",
+              "icbName": "Sản xuất Dầu khí (0530 - Cấp 3)",
+              "parentIcbId": 2,
+              "icbLevel": 3,
+              "numberOfSymbols": 5,
+              "childs": [
+                {
+                  "icbId": 4,
+                  "icbCode": "0533",
+                  "icbName": "Sản xuất và Khai thác dầu khí (0533 - Cấp 4)",
+                  "parentIcbId": 3,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 5,
+                  "childs": []
+                },
+                {
+                  "icbId": 5,
+                  "icbCode": "0537",
+                  "icbName": "Tổ hợp Dầu khí (0537 - Cấp 4)",
+                  "parentIcbId": 3,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 0,
+                  "childs": []
+                }
+              ]
+            },
+            {
+              "icbId": 6,
+              "icbCode": "0570",
+              "icbName": "Thiết bị, Dịch vụ và Phân phối Dầu khí (0570 - Cấp 3)",
+              "parentIcbId": 2,
+              "icbLevel": 3,
+              "numberOfSymbols": 10,
+              "childs": [
+                {
+                  "icbId": 7,
+                  "icbCode": "0573",
+                  "icbName": "Thiết bị và Dịch vụ Dầu khí (0573 - Cấp 4)",
+                  "parentIcbId": 6,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 9,
+                  "childs": []
+                },
+                {
+                  "icbId": 8,
+                  "icbCode": "0577",
+                  "icbName": "Ống dẫn Dầu (0577 - Cấp 4)",
+                  "parentIcbId": 6,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 1,
+                  "childs": []
+                }
+              ]
+            },
+            {
+              "icbId": 9,
+              "icbCode": "0580",
+              "icbName": "Năng lượng thay thế (0580 - Cấp 3)",
+              "parentIcbId": 2,
+              "icbLevel": 3,
+              "numberOfSymbols": 5,
+              "childs": [
+                {
+                  "icbId": 10,
+                  "icbCode": "0583",
+                  "icbName": "Thiết bị năng lượng tái chế (0583 - Cấp 4)",
+                  "parentIcbId": 9,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 1,
+                  "childs": []
+                },
+                {
+                  "icbId": 11,
+                  "icbCode": "0587",
+                  "icbName": "Nhiên liệu thay thế (0587 - Cấp 4)",
+                  "parentIcbId": 9,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 4,
+                  "childs": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "icbId": 12,
+      "icbCode": "1000",
+      "icbName": "Nguyên vật liệu (1000 - Cấp 1)",
+      "parentIcbId": 12,
+      "icbLevel": 1,
+      "numberOfSymbols": 166,
+      "childs": [
+        {
+          "icbId": 13,
+          "icbCode": "1300",
+          "icbName": "Hóa chất (1300 - Cấp 2)",
+          "parentIcbId": 12,
+          "icbLevel": 2,
+          "numberOfSymbols": 67,
+          "childs": [
+            {
+              "icbId": 14,
+              "icbCode": "1350",
+              "icbName": "Hóa chất (1350 - Cấp 3)",
+              "parentIcbId": 13,
+              "icbLevel": 3,
+              "numberOfSymbols": 67,
+              "childs": [
+                {
+                  "icbId": 15,
+                  "icbCode": "1353",
+                  "icbName": "Nhựa, cao su & sợi (1353 - Cấp 4)",
+                  "parentIcbId": 14,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 41,
+                  "childs": []
+                },
+                {
+                  "icbId": 16,
+                  "icbCode": "1357",
+                  "icbName": "Sản phẩm hóa dầu, Nông dược & Hóa chất khác (1357 - Cấp 4)",
+                  "parentIcbId": 14,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 26,
+                  "childs": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "icbId": 17,
+          "icbCode": "1700",
+          "icbName": "Tài nguyên Cơ bản (1700 - Cấp 2)",
+          "parentIcbId": 12,
+          "icbLevel": 2,
+          "numberOfSymbols": 99,
+          "childs": [
+            {
+              "icbId": 18,
+              "icbCode": "1730",
+              "icbName": "Lâm nghiệp và Giấy (1730 - Cấp 3)",
+              "parentIcbId": 17,
+              "icbLevel": 3,
+              "numberOfSymbols": 17,
+              "childs": [
+                {
+                  "icbId": 19,
+                  "icbCode": "1733",
+                  "icbName": "Lâm sản và Chế biến gỗ (1733 - Cấp 4)",
+                  "parentIcbId": 18,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 9,
+                  "childs": []
+                },
+                {
+                  "icbId": 20,
+                  "icbCode": "1737",
+                  "icbName": "Sản xuất giấy (1737 - Cấp 4)",
+                  "parentIcbId": 18,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 8,
+                  "childs": []
+                }
+              ]
+            },
+            {
+              "icbId": 21,
+              "icbCode": "1750",
+              "icbName": "Kim loại (1750 - Cấp 3)",
+              "parentIcbId": 17,
+              "icbLevel": 3,
+              "numberOfSymbols": 41,
+              "childs": [
+                {
+                  "icbId": 22,
+                  "icbCode": "1753",
+                  "icbName": "Nhôm (1753 - Cấp 4)",
+                  "parentIcbId": 21,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 1,
+                  "childs": []
+                },
+                {
+                  "icbId": 23,
+                  "icbCode": "1755",
+                  "icbName": "Kim Loại màu (1755 - Cấp 4)",
+                  "parentIcbId": 21,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 10,
+                  "childs": []
+                },
+                {
+                  "icbId": 24,
+                  "icbCode": "1757",
+                  "icbName": "Thép và sản phẩm thép (1757 - Cấp 4)",
+                  "parentIcbId": 21,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 30,
+                  "childs": []
+                }
+              ]
+            },
+            {
+              "icbId": 25,
+              "icbCode": "1770",
+              "icbName": "Khai khoáng (1770 - Cấp 3)",
+              "parentIcbId": 17,
+              "icbLevel": 3,
+              "numberOfSymbols": 41,
+              "childs": [
+                {
+                  "icbId": 26,
+                  "icbCode": "1771",
+                  "icbName": "Khai thác Than (1771 - Cấp 4)",
+                  "parentIcbId": 25,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 13,
+                  "childs": []
+                },
+                {
+                  "icbId": 27,
+                  "icbCode": "1773",
+                  "icbName": "Đá quý và Kim cương (1773 - Cấp 4)",
+                  "parentIcbId": 25,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 0,
+                  "childs": []
+                },
+                {
+                  "icbId": 28,
+                  "icbCode": "1775",
+                  "icbName": "Khai khoáng  (1775 - Cấp 4)",
+                  "parentIcbId": 25,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 27,
+                  "childs": []
+                },
+                {
+                  "icbId": 29,
+                  "icbCode": "1777",
+                  "icbName": "Khai thác vàng (1777 - Cấp 4)",
+                  "parentIcbId": 25,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 1,
+                  "childs": []
+                },
+                {
+                  "icbId": 30,
+                  "icbCode": "1779",
+                  "icbName": "Bạch kim & Kim loại quý khác (1779 - Cấp 4)",
+                  "parentIcbId": 25,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 0,
+                  "childs": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "icbId": 31,
+      "icbCode": "2000",
+      "icbName": "Công nghiệp (2000 - Cấp 1)",
+      "parentIcbId": 31,
+      "icbLevel": 1,
+      "numberOfSymbols": 529,
+      "childs": [
+        {
+          "icbId": 32,
+          "icbCode": "2300",
+          "icbName": "Xây dựng và Vật liệu (2300 - Cấp 2)",
+          "parentIcbId": 31,
+          "icbLevel": 2,
+          "numberOfSymbols": 287,
+          "childs": [
+            {
+              "icbId": 33,
+              "icbCode": "2350",
+              "icbName": "Xây dựng và Vật liệu (2350 - Cấp 3)",
+              "parentIcbId": 32,
+              "icbLevel": 3,
+              "numberOfSymbols": 287,
+              "childs": [
+                {
+                  "icbId": 34,
+                  "icbCode": "2353",
+                  "icbName": "Vật liệu xây dựng & Nội thất (2353 - Cấp 4)",
+                  "parentIcbId": 33,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 97,
+                  "childs": []
+                },
+                {
+                  "icbId": 35,
+                  "icbCode": "2357",
+                  "icbName": "Xây dựng (2357 - Cấp 4)",
+                  "parentIcbId": 33,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 190,
+                  "childs": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "icbId": 36,
+          "icbCode": "2700",
+          "icbName": "Hàng & Dịch vụ Công nghiệp (2700 - Cấp 2)",
+          "parentIcbId": 31,
+          "icbLevel": 2,
+          "numberOfSymbols": 242,
+          "childs": [
+            {
+              "icbId": 37,
+              "icbCode": "2710",
+              "icbName": "Hàng không & Quốc phòng (2710 - Cấp 3)",
+              "parentIcbId": 36,
+              "icbLevel": 3,
+              "numberOfSymbols": 0,
+              "childs": [
+                {
+                  "icbId": 38,
+                  "icbCode": "2713",
+                  "icbName": "Hàng không (2713 - Cấp 4)",
+                  "parentIcbId": 37,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 0,
+                  "childs": []
+                },
+                {
+                  "icbId": 39,
+                  "icbCode": "2717",
+                  "icbName": "Quốc phòng (2717 - Cấp 4)",
+                  "parentIcbId": 37,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 0,
+                  "childs": []
+                }
+              ]
+            },
+            {
+              "icbId": 40,
+              "icbCode": "2720",
+              "icbName": "Hàng công nghiệp (2720 - Cấp 3)",
+              "parentIcbId": 36,
+              "icbLevel": 3,
+              "numberOfSymbols": 24,
+              "childs": [
+                {
+                  "icbId": 41,
+                  "icbCode": "2723",
+                  "icbName": "Containers & Đóng gói (2723 - Cấp 4)",
+                  "parentIcbId": 40,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 21,
+                  "childs": []
+                },
+                {
+                  "icbId": 42,
+                  "icbCode": "2727",
+                  "icbName": "Công nghiệp phức hợp (2727 - Cấp 4)",
+                  "parentIcbId": 40,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 3,
+                  "childs": []
+                }
+              ]
+            },
+            {
+              "icbId": 43,
+              "icbCode": "2730",
+              "icbName": "Điện tử & Thiết bị điện (2730 - Cấp 3)",
+              "parentIcbId": 36,
+              "icbLevel": 3,
+              "numberOfSymbols": 23,
+              "childs": [
+                {
+                  "icbId": 44,
+                  "icbCode": "2733",
+                  "icbName": "Hàng điện & điện tử (2733 - Cấp 4)",
+                  "parentIcbId": 43,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 16,
+                  "childs": []
+                },
+                {
+                  "icbId": 45,
+                  "icbCode": "2737",
+                  "icbName": "Thiết bị điện (2737 - Cấp 4)",
+                  "parentIcbId": 43,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 7,
+                  "childs": []
+                }
+              ]
+            },
+            {
+              "icbId": 46,
+              "icbCode": "2750",
+              "icbName": "Công nghiệp nặng (2750 - Cấp 3)",
+              "parentIcbId": 36,
+              "icbLevel": 3,
+              "numberOfSymbols": 29,
+              "childs": [
+                {
+                  "icbId": 47,
+                  "icbCode": "2753",
+                  "icbName": "Xe tải & Đóng tàu (2753 - Cấp 4)",
+                  "parentIcbId": 46,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 0,
+                  "childs": []
+                },
+                {
+                  "icbId": 48,
+                  "icbCode": "2757",
+                  "icbName": "Máy công nghiệp (2757 - Cấp 4)",
+                  "parentIcbId": 46,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 29,
+                  "childs": []
+                }
+              ]
+            },
+            {
+              "icbId": 49,
+              "icbCode": "2770",
+              "icbName": "Vận tải (2770 - Cấp 3)",
+              "parentIcbId": 36,
+              "icbLevel": 3,
+              "numberOfSymbols": 127,
+              "childs": [
+                {
+                  "icbId": 50,
+                  "icbCode": "2771",
+                  "icbName": "Chuyển phát nhanh (2771 - Cấp 4)",
+                  "parentIcbId": 49,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 2,
+                  "childs": []
+                },
+                {
+                  "icbId": 51,
+                  "icbCode": "2773",
+                  "icbName": "Vận tải Thủy (2773 - Cấp 4)",
+                  "parentIcbId": 49,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 28,
+                  "childs": []
+                },
+                {
+                  "icbId": 52,
+                  "icbCode": "2775",
+                  "icbName": "Đường sắt (2775 - Cấp 4)",
+                  "parentIcbId": 49,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 2,
+                  "childs": []
+                },
+                {
+                  "icbId": 53,
+                  "icbCode": "2777",
+                  "icbName": "Kho bãi, hậu cần và bảo dưỡng (2777 - Cấp 4)",
+                  "parentIcbId": 49,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 81,
+                  "childs": []
+                },
+                {
+                  "icbId": 54,
+                  "icbCode": "2779",
+                  "icbName": "Dịch vụ vận tải (2779 - Cấp 4)",
+                  "parentIcbId": 49,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 14,
+                  "childs": []
+                }
+              ]
+            },
+            {
+              "icbId": 55,
+              "icbCode": "2790",
+              "icbName": "Tư vấn & Hỗ trợ Kinh doanh (2790 - Cấp 3)",
+              "parentIcbId": 36,
+              "icbLevel": 3,
+              "numberOfSymbols": 39,
+              "childs": [
+                {
+                  "icbId": 56,
+                  "icbCode": "2791",
+                  "icbName": "Tư vấn & Hỗ trợ KD (2791 - Cấp 4)",
+                  "parentIcbId": 55,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 25,
+                  "childs": []
+                },
+                {
+                  "icbId": 57,
+                  "icbCode": "2793",
+                  "icbName": "Đào tạo & Việc làm (2793 - Cấp 4)",
+                  "parentIcbId": 55,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 5,
+                  "childs": []
+                },
+                {
+                  "icbId": 58,
+                  "icbCode": "2795",
+                  "icbName": "Quản lý Tài chính (2795 - Cấp 4)",
+                  "parentIcbId": 55,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 0,
+                  "childs": []
+                },
+                {
+                  "icbId": 59,
+                  "icbCode": "2797",
+                  "icbName": "Nhà cung cấp thiết bị (2797 - Cấp 4)",
+                  "parentIcbId": 55,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 2,
+                  "childs": []
+                },
+                {
+                  "icbId": 60,
+                  "icbCode": "2799",
+                  "icbName": "Chất thải & Môi trường (2799 - Cấp 4)",
+                  "parentIcbId": 55,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 7,
+                  "childs": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "icbId": 61,
+      "icbCode": "3000",
+      "icbName": "Hàng Tiêu dùng (3000 - Cấp 1)",
+      "parentIcbId": 61,
+      "icbLevel": 1,
+      "numberOfSymbols": 245,
+      "childs": [
+        {
+          "icbId": 62,
+          "icbCode": "3300",
+          "icbName": "Ô tô và phụ tùng (3300 - Cấp 2)",
+          "parentIcbId": 61,
+          "icbLevel": 2,
+          "numberOfSymbols": 16,
+          "childs": [
+            {
+              "icbId": 63,
+              "icbCode": "3350",
+              "icbName": "Ô tô và phụ tùng (3350 - Cấp 3)",
+              "parentIcbId": 62,
+              "icbLevel": 3,
+              "numberOfSymbols": 16,
+              "childs": [
+                {
+                  "icbId": 64,
+                  "icbCode": "3353",
+                  "icbName": "Sản xuất ô tô (3353 - Cấp 4)",
+                  "parentIcbId": 63,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 11,
+                  "childs": []
+                },
+                {
+                  "icbId": 65,
+                  "icbCode": "3355",
+                  "icbName": "Phụ tùng ô tô (3355 - Cấp 4)",
+                  "parentIcbId": 63,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 1,
+                  "childs": []
+                },
+                {
+                  "icbId": 66,
+                  "icbCode": "3357",
+                  "icbName": "Lốp xe (3357 - Cấp 4)",
+                  "parentIcbId": 63,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 4,
+                  "childs": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "icbId": 67,
+          "icbCode": "3500",
+          "icbName": "Thực phẩm và đồ uống (3500 - Cấp 2)",
+          "parentIcbId": 61,
+          "icbLevel": 2,
+          "numberOfSymbols": 151,
+          "childs": [
+            {
+              "icbId": 68,
+              "icbCode": "3530",
+              "icbName": "Bia và đồ uống (3530 - Cấp 3)",
+              "parentIcbId": 67,
+              "icbLevel": 3,
+              "numberOfSymbols": 39,
+              "childs": [
+                {
+                  "icbId": 69,
+                  "icbCode": "3533",
+                  "icbName": "Sản xuất bia  (3533 - Cấp 4)",
+                  "parentIcbId": 68,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 26,
+                  "childs": []
+                },
+                {
+                  "icbId": 70,
+                  "icbCode": "3535",
+                  "icbName": "Vang & Rượu mạnh (3535 - Cấp 4)",
+                  "parentIcbId": 68,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 3,
+                  "childs": []
+                },
+                {
+                  "icbId": 71,
+                  "icbCode": "3537",
+                  "icbName": "Đồ uống & giải khát (3537 - Cấp 4)",
+                  "parentIcbId": 68,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 10,
+                  "childs": []
+                }
+              ]
+            },
+            {
+              "icbId": 72,
+              "icbCode": "3570",
+              "icbName": "Sản xuất thực phẩm (3570 - Cấp 3)",
+              "parentIcbId": 67,
+              "icbLevel": 3,
+              "numberOfSymbols": 112,
+              "childs": [
+                {
+                  "icbId": 73,
+                  "icbCode": "3573",
+                  "icbName": "Nuôi trồng nông & hải sản (3573 - Cấp 4)",
+                  "parentIcbId": 72,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 48,
+                  "childs": []
+                },
+                {
+                  "icbId": 74,
+                  "icbCode": "3577",
+                  "icbName": "Thực phẩm (3577 - Cấp 4)",
+                  "parentIcbId": 72,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 64,
+                  "childs": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "icbId": 75,
+          "icbCode": "3700",
+          "icbName": "Hàng cá nhân & Gia dụng (3700 - Cấp 2)",
+          "parentIcbId": 61,
+          "icbLevel": 2,
+          "numberOfSymbols": 78,
+          "childs": [
+            {
+              "icbId": 76,
+              "icbCode": "3720",
+              "icbName": "Hàng gia dụng (3720 - Cấp 3)",
+              "parentIcbId": 75,
+              "icbLevel": 3,
+              "numberOfSymbols": 22,
+              "childs": [
+                {
+                  "icbId": 77,
+                  "icbCode": "3722",
+                  "icbName": "Đồ gia dụng lâu bền (3722 - Cấp 4)",
+                  "parentIcbId": 76,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 9,
+                  "childs": []
+                },
+                {
+                  "icbId": 78,
+                  "icbCode": "3724",
+                  "icbName": "Đồ gia dụng một lần (3724 - Cấp 4)",
+                  "parentIcbId": 76,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 7,
+                  "childs": []
+                },
+                {
+                  "icbId": 79,
+                  "icbCode": "3726",
+                  "icbName": "Thiết bị gia dụng (3726 - Cấp 4)",
+                  "parentIcbId": 76,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 6,
+                  "childs": []
+                },
+                {
+                  "icbId": 80,
+                  "icbCode": "3728",
+                  "icbName": "Xây nhà (3728 - Cấp 4)",
+                  "parentIcbId": 76,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 0,
+                  "childs": []
+                }
+              ]
+            },
+            {
+              "icbId": 81,
+              "icbCode": "3740",
+              "icbName": "Hàng hóa giải trí (3740 - Cấp 3)",
+              "parentIcbId": 75,
+              "icbLevel": 3,
+              "numberOfSymbols": 3,
+              "childs": [
+                {
+                  "icbId": 82,
+                  "icbCode": "3743",
+                  "icbName": "Điện tử tiêu dùng (3743 - Cấp 4)",
+                  "parentIcbId": 81,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 3,
+                  "childs": []
+                },
+                {
+                  "icbId": 83,
+                  "icbCode": "3745",
+                  "icbName": "Sản phẩm nghệ thuật (3745 - Cấp 4)",
+                  "parentIcbId": 81,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 0,
+                  "childs": []
+                },
+                {
+                  "icbId": 84,
+                  "icbCode": "3747",
+                  "icbName": "Đồ chơi (3747 - Cấp 4)",
+                  "parentIcbId": 81,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 0,
+                  "childs": []
+                }
+              ]
+            },
+            {
+              "icbId": 85,
+              "icbCode": "3760",
+              "icbName": "Hàng cá nhân (3760 - Cấp 3)",
+              "parentIcbId": 75,
+              "icbLevel": 3,
+              "numberOfSymbols": 50,
+              "childs": [
+                {
+                  "icbId": 86,
+                  "icbCode": "3763",
+                  "icbName": "Hàng May mặc (3763 - Cấp 4)",
+                  "parentIcbId": 85,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 43,
+                  "childs": []
+                },
+                {
+                  "icbId": 87,
+                  "icbCode": "3765",
+                  "icbName": "Giầy dép (3765 - Cấp 4)",
+                  "parentIcbId": 85,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 2,
+                  "childs": []
+                },
+                {
+                  "icbId": 88,
+                  "icbCode": "3767",
+                  "icbName": "Hàng cá nhân (3767 - Cấp 4)",
+                  "parentIcbId": 85,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 5,
+                  "childs": []
+                }
+              ]
+            },
+            {
+              "icbId": 89,
+              "icbCode": "3780",
+              "icbName": "Thuốc lá (3780 - Cấp 3)",
+              "parentIcbId": 75,
+              "icbLevel": 3,
+              "numberOfSymbols": 3,
+              "childs": [
+                {
+                  "icbId": 90,
+                  "icbCode": "3785",
+                  "icbName": "Thuốc lá (3785 - Cấp 4)",
+                  "parentIcbId": 89,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 3,
+                  "childs": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "icbId": 91,
+      "icbCode": "4000",
+      "icbName": "Dược phẩm và Y tế (4000 - Cấp 1)",
+      "parentIcbId": 91,
+      "icbLevel": 1,
+      "numberOfSymbols": 62,
+      "childs": [
+        {
+          "icbId": 92,
+          "icbCode": "4500",
+          "icbName": "Y tế (4500 - Cấp 2)",
+          "parentIcbId": 91,
+          "icbLevel": 2,
+          "numberOfSymbols": 62,
+          "childs": [
+            {
+              "icbId": 93,
+              "icbCode": "4530",
+              "icbName": "Thiết bị và Dịch vụ Y tế (4530 - Cấp 3)",
+              "parentIcbId": 92,
+              "icbLevel": 3,
+              "numberOfSymbols": 10,
+              "childs": [
+                {
+                  "icbId": 94,
+                  "icbCode": "4533",
+                  "icbName": "Chăm sóc y tế (4533 - Cấp 4)",
+                  "parentIcbId": 93,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 2,
+                  "childs": []
+                },
+                {
+                  "icbId": 95,
+                  "icbCode": "4535",
+                  "icbName": "Thiết bị y tế (4535 - Cấp 4)",
+                  "parentIcbId": 93,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 6,
+                  "childs": []
+                },
+                {
+                  "icbId": 96,
+                  "icbCode": "4537",
+                  "icbName": "Dụng cụ y tế (4537 - Cấp 4)",
+                  "parentIcbId": 93,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 2,
+                  "childs": []
+                }
+              ]
+            },
+            {
+              "icbId": 97,
+              "icbCode": "4570",
+              "icbName": "Dược phẩm (4570 - Cấp 3)",
+              "parentIcbId": 92,
+              "icbLevel": 3,
+              "numberOfSymbols": 52,
+              "childs": [
+                {
+                  "icbId": 98,
+                  "icbCode": "4573",
+                  "icbName": "Công nghệ sinh học (4573 - Cấp 4)",
+                  "parentIcbId": 97,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 3,
+                  "childs": []
+                },
+                {
+                  "icbId": 99,
+                  "icbCode": "4577",
+                  "icbName": "Dược phẩm (4577 - Cấp 4)",
+                  "parentIcbId": 97,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 49,
+                  "childs": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "icbId": 100,
+      "icbCode": "5000",
+      "icbName": "Dịch vụ Tiêu dùng (5000 - Cấp 1)",
+      "parentIcbId": 100,
+      "icbLevel": 1,
+      "numberOfSymbols": 104,
+      "childs": [
+        {
+          "icbId": 101,
+          "icbCode": "5300",
+          "icbName": "Bán lẻ (5300 - Cấp 2)",
+          "parentIcbId": 100,
+          "icbLevel": 2,
+          "numberOfSymbols": 30,
+          "childs": [
+            {
+              "icbId": 102,
+              "icbCode": "5330",
+              "icbName": "Phân phối thực phẩm & dược phẩm (5330 - Cấp 3)",
+              "parentIcbId": 101,
+              "icbLevel": 3,
+              "numberOfSymbols": 4,
+              "childs": [
+                {
+                  "icbId": 103,
+                  "icbCode": "5333",
+                  "icbName": "Phân phối dược phẩm (5333 - Cấp 4)",
+                  "parentIcbId": 102,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 1,
+                  "childs": []
+                },
+                {
+                  "icbId": 104,
+                  "icbCode": "5337",
+                  "icbName": "Phân phối thực phẩm (5337 - Cấp 4)",
+                  "parentIcbId": 102,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 3,
+                  "childs": []
+                }
+              ]
+            },
+            {
+              "icbId": 105,
+              "icbCode": "5370",
+              "icbName": "Bán lẻ (5370 - Cấp 3)",
+              "parentIcbId": 101,
+              "icbLevel": 3,
+              "numberOfSymbols": 26,
+              "childs": [
+                {
+                  "icbId": 106,
+                  "icbCode": "5371",
+                  "icbName": "Bán lẻ hàng may mặc (5371 - Cấp 4)",
+                  "parentIcbId": 105,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 1,
+                  "childs": []
+                },
+                {
+                  "icbId": 107,
+                  "icbCode": "5373",
+                  "icbName": "Bán lẻ phức hợp (5373 - Cấp 4)",
+                  "parentIcbId": 105,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 23,
+                  "childs": []
+                },
+                {
+                  "icbId": 108,
+                  "icbCode": "5375",
+                  "icbName": "Phân phối nội thất (5375 - Cấp 4)",
+                  "parentIcbId": 105,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 0,
+                  "childs": []
+                },
+                {
+                  "icbId": 109,
+                  "icbCode": "5377",
+                  "icbName": "Dịch vụ tiêu dùng chuyên ngành (5377 - Cấp 4)",
+                  "parentIcbId": 105,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 1,
+                  "childs": []
+                },
+                {
+                  "icbId": 110,
+                  "icbCode": "5379",
+                  "icbName": "Phân phối hàng chuyên dụng (5379 - Cấp 4)",
+                  "parentIcbId": 105,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 1,
+                  "childs": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "icbId": 111,
+          "icbCode": "5500",
+          "icbName": "Truyền thông (5500 - Cấp 2)",
+          "parentIcbId": 100,
+          "icbLevel": 2,
+          "numberOfSymbols": 33,
+          "childs": [
+            {
+              "icbId": 112,
+              "icbCode": "5550",
+              "icbName": "Truyền thông (5550 - Cấp 3)",
+              "parentIcbId": 111,
+              "icbLevel": 3,
+              "numberOfSymbols": 33,
+              "childs": [
+                {
+                  "icbId": 113,
+                  "icbCode": "5553",
+                  "icbName": "Giải trí & Truyền thông (5553 - Cấp 4)",
+                  "parentIcbId": 112,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 1,
+                  "childs": []
+                },
+                {
+                  "icbId": 114,
+                  "icbCode": "5555",
+                  "icbName": "Dịch vụ truyền thông (5555 - Cấp 4)",
+                  "parentIcbId": 112,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 5,
+                  "childs": []
+                },
+                {
+                  "icbId": 115,
+                  "icbCode": "5557",
+                  "icbName": "Sách, ấn bản & sản phẩm văn hóa (5557 - Cấp 4)",
+                  "parentIcbId": 112,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 27,
+                  "childs": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "icbId": 116,
+          "icbCode": "5700",
+          "icbName": "Du lịch và Giải trí (5700 - Cấp 2)",
+          "parentIcbId": 100,
+          "icbLevel": 2,
+          "numberOfSymbols": 41,
+          "childs": [
+            {
+              "icbId": 117,
+              "icbCode": "5750",
+              "icbName": "Du lịch & Giải trí (5750 - Cấp 3)",
+              "parentIcbId": 116,
+              "icbLevel": 3,
+              "numberOfSymbols": 41,
+              "childs": [
+                {
+                  "icbId": 118,
+                  "icbCode": "5751",
+                  "icbName": "Hàng không (5751 - Cấp 4)",
+                  "parentIcbId": 117,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 2,
+                  "childs": []
+                },
+                {
+                  "icbId": 119,
+                  "icbCode": "5752",
+                  "icbName": "Gambling (5752 - Cấp 4)",
+                  "parentIcbId": 117,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 0,
+                  "childs": []
+                },
+                {
+                  "icbId": 120,
+                  "icbCode": "5753",
+                  "icbName": "Khách sạn (5753 - Cấp 4)",
+                  "parentIcbId": 117,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 8,
+                  "childs": []
+                },
+                {
+                  "icbId": 121,
+                  "icbCode": "5755",
+                  "icbName": "Dịch vụ giải trí (5755 - Cấp 4)",
+                  "parentIcbId": 117,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 7,
+                  "childs": []
+                },
+                {
+                  "icbId": 122,
+                  "icbCode": "5757",
+                  "icbName": "Nhà hàng và quán bar (5757 - Cấp 4)",
+                  "parentIcbId": 117,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 1,
+                  "childs": []
+                },
+                {
+                  "icbId": 123,
+                  "icbCode": "5759",
+                  "icbName": "Vận tải hành khách & Du lịch (5759 - Cấp 4)",
+                  "parentIcbId": 117,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 23,
+                  "childs": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "icbId": 124,
+      "icbCode": "6000",
+      "icbName": "Viễn thông (6000 - Cấp 1)",
+      "parentIcbId": 124,
+      "icbLevel": 1,
+      "numberOfSymbols": 5,
+      "childs": [
+        {
+          "icbId": 125,
+          "icbCode": "6500",
+          "icbName": "Viễn thông (6500 - Cấp 2)",
+          "parentIcbId": 124,
+          "icbLevel": 2,
+          "numberOfSymbols": 5,
+          "childs": [
+            {
+              "icbId": 126,
+              "icbCode": "6530",
+              "icbName": "Viễn thông cố định (6530 - Cấp 3)",
+              "parentIcbId": 125,
+              "icbLevel": 3,
+              "numberOfSymbols": 2,
+              "childs": [
+                {
+                  "icbId": 127,
+                  "icbCode": "6535",
+                  "icbName": "Viễn thông cố định (6535 - Cấp 4)",
+                  "parentIcbId": 126,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 2,
+                  "childs": []
+                }
+              ]
+            },
+            {
+              "icbId": 128,
+              "icbCode": "6570",
+              "icbName": "Viễn thông di động (6570 - Cấp 3)",
+              "parentIcbId": 125,
+              "icbLevel": 3,
+              "numberOfSymbols": 3,
+              "childs": [
+                {
+                  "icbId": 129,
+                  "icbCode": "6575",
+                  "icbName": "Viễn thông di động (6575 - Cấp 4)",
+                  "parentIcbId": 128,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 3,
+                  "childs": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "icbId": 130,
+      "icbCode": "7000",
+      "icbName": "Tiện ích Cộng đồng (7000 - Cấp 1)",
+      "parentIcbId": 130,
+      "icbLevel": 1,
+      "numberOfSymbols": 152,
+      "childs": [
+        {
+          "icbId": 131,
+          "icbCode": "7500",
+          "icbName": "Điện, nước & xăng dầu khí đốt (7500 - Cấp 2)",
+          "parentIcbId": 130,
+          "icbLevel": 2,
+          "numberOfSymbols": 152,
+          "childs": [
+            {
+              "icbId": 132,
+              "icbCode": "7530",
+              "icbName": "Sản xuất & Phân phối Điện (7530 - Cấp 3)",
+              "parentIcbId": 131,
+              "icbLevel": 3,
+              "numberOfSymbols": 54,
+              "childs": [
+                {
+                  "icbId": 133,
+                  "icbCode": "7535",
+                  "icbName": "Sản xuất & Phân phối Điện (7535 - Cấp 4)",
+                  "parentIcbId": 132,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 54,
+                  "childs": []
+                }
+              ]
+            },
+            {
+              "icbId": 134,
+              "icbCode": "7570",
+              "icbName": "Nước & Khí đốt (7570 - Cấp 3)",
+              "parentIcbId": 131,
+              "icbLevel": 3,
+              "numberOfSymbols": 98,
+              "childs": [
+                {
+                  "icbId": 135,
+                  "icbCode": "7573",
+                  "icbName": "Phân phối xăng dầu & khí đốt (7573 - Cấp 4)",
+                  "parentIcbId": 134,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 20,
+                  "childs": []
+                },
+                {
+                  "icbId": 136,
+                  "icbCode": "7575",
+                  "icbName": "Tiện ích khác (7575 - Cấp 4)",
+                  "parentIcbId": 134,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 25,
+                  "childs": []
+                },
+                {
+                  "icbId": 137,
+                  "icbCode": "7577",
+                  "icbName": "Nước (7577 - Cấp 4)",
+                  "parentIcbId": 134,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 53,
+                  "childs": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "icbId": 138,
+      "icbCode": "8000",
+      "icbName": "Tài chính (8000 - Cấp 1)",
+      "parentIcbId": 138,
+      "icbLevel": 1,
+      "numberOfSymbols": 234,
+      "childs": [
+        {
+          "icbId": 139,
+          "icbCode": "8300",
+          "icbName": "Ngân hàng (8300 - Cấp 2)",
+          "parentIcbId": 138,
+          "icbLevel": 2,
+          "numberOfSymbols": 30,
+          "childs": [
+            {
+              "icbId": 141,
+              "icbCode": "8350",
+              "icbName": "Ngân hàng (8350 - Cấp 3)",
+              "parentIcbId": 139,
+              "icbLevel": 3,
+              "numberOfSymbols": 30,
+              "childs": [
+                {
+                  "icbId": 142,
+                  "icbCode": "8355",
+                  "icbName": "Ngân hàng (8355 - Cấp 4)",
+                  "parentIcbId": 141,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 30,
+                  "childs": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "icbId": 143,
+          "icbCode": "8500",
+          "icbName": "Bảo hiểm (8500 - Cấp 2)",
+          "parentIcbId": 138,
+          "icbLevel": 2,
+          "numberOfSymbols": 13,
+          "childs": [
+            {
+              "icbId": 144,
+              "icbCode": "8530",
+              "icbName": "Bảo hiểm phi nhân thọ (8530 - Cấp 3)",
+              "parentIcbId": 143,
+              "icbLevel": 3,
+              "numberOfSymbols": 3,
+              "childs": [
+                {
+                  "icbId": 145,
+                  "icbCode": "8532",
+                  "icbName": "Bảo hiểm phức hợp (8532 - Cấp 4)",
+                  "parentIcbId": 144,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 1,
+                  "childs": []
+                },
+                {
+                  "icbId": 146,
+                  "icbCode": "8534",
+                  "icbName": "Môi giới bảo hiểm (8534 - Cấp 4)",
+                  "parentIcbId": 144,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 0,
+                  "childs": []
+                },
+                {
+                  "icbId": 147,
+                  "icbCode": "8536",
+                  "icbName": "Bảo hiểm phi nhân thọ (8536 - Cấp 4)",
+                  "parentIcbId": 144,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 0,
+                  "childs": []
+                },
+                {
+                  "icbId": 148,
+                  "icbCode": "8538",
+                  "icbName": "Tái bảo hiểm (8538 - Cấp 4)",
+                  "parentIcbId": 144,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 2,
+                  "childs": []
+                }
+              ]
+            },
+            {
+              "icbId": 149,
+              "icbCode": "8570",
+              "icbName": "Bảo hiểm nhân thọ (8570 - Cấp 3)",
+              "parentIcbId": 143,
+              "icbLevel": 3,
+              "numberOfSymbols": 0,
+              "childs": [
+                {
+                  "icbId": 150,
+                  "icbCode": "8575",
+                  "icbName": "Bảo hiểm nhân thọ (8575 - Cấp 4)",
+                  "parentIcbId": 149,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 0,
+                  "childs": []
+                }
+              ]
+            },
+            {
+              "icbId": 355,
+              "icbCode": "8580",
+              "icbName": "Công ty bảo hiểm (8580 - Cấp 3)",
+              "parentIcbId": 143,
+              "icbLevel": 3,
+              "numberOfSymbols": 10,
+              "childs": [
+                {
+                  "icbId": 356,
+                  "icbCode": "8581",
+                  "icbName": "Công ty bảo hiểm (8581 - Cấp 4)",
+                  "parentIcbId": 355,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 10,
+                  "childs": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "icbId": 151,
+          "icbCode": "8600",
+          "icbName": "Bất động sản (8600 - Cấp 2)",
+          "parentIcbId": 138,
+          "icbLevel": 2,
+          "numberOfSymbols": 121,
+          "childs": [
+            {
+              "icbId": 152,
+              "icbCode": "8630",
+              "icbName": "Bất động sản (8630 - Cấp 3)",
+              "parentIcbId": 151,
+              "icbLevel": 3,
+              "numberOfSymbols": 121,
+              "childs": [
+                {
+                  "icbId": 153,
+                  "icbCode": "8633",
+                  "icbName": "Bất động sản (8633 - Cấp 4)",
+                  "parentIcbId": 152,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 93,
+                  "childs": []
+                },
+                {
+                  "icbId": 154,
+                  "icbCode": "8637",
+                  "icbName": "Tư Vấn, Định giá, Môi giới Bất động sản (8637 - Cấp 4)",
+                  "parentIcbId": 152,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 28,
+                  "childs": []
+                }
+              ]
+            },
+            {
+              "icbId": 155,
+              "icbCode": "8670",
+              "icbName": "Quỹ ủy thác BĐS (8670 - Cấp 3)",
+              "parentIcbId": 151,
+              "icbLevel": 3,
+              "numberOfSymbols": 0,
+              "childs": [
+                {
+                  "icbId": 156,
+                  "icbCode": "8677",
+                  "icbName": "Quỹ ủy thác BĐS (8677 - Cấp 4)",
+                  "parentIcbId": 155,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 0,
+                  "childs": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "icbId": 157,
+          "icbCode": "8700",
+          "icbName": "Dịch vụ tài chính (8700 - Cấp 2)",
+          "parentIcbId": 138,
+          "icbLevel": 2,
+          "numberOfSymbols": 47,
+          "childs": [
+            {
+              "icbId": 158,
+              "icbCode": "8770",
+              "icbName": "Dịch vụ tài chính (8770 - Cấp 3)",
+              "parentIcbId": 157,
+              "icbLevel": 3,
+              "numberOfSymbols": 6,
+              "childs": [
+                {
+                  "icbId": 159,
+                  "icbCode": "8771",
+                  "icbName": "Quản lý tài sản (8771 - Cấp 4)",
+                  "parentIcbId": 158,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 2,
+                  "childs": []
+                },
+                {
+                  "icbId": 160,
+                  "icbCode": "8773",
+                  "icbName": "Tài chính cá nhân (8773 - Cấp 4)",
+                  "parentIcbId": 158,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 1,
+                  "childs": []
+                },
+                {
+                  "icbId": 161,
+                  "icbCode": "8775",
+                  "icbName": "Tài chính đặc biệt (8775 - Cấp 4)",
+                  "parentIcbId": 158,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 3,
+                  "childs": []
+                },
+                {
+                  "icbId": 162,
+                  "icbCode": "8777",
+                  "icbName": "Môi giới chứng khoán (8777 - Cấp 4)",
+                  "parentIcbId": 158,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 0,
+                  "childs": []
+                },
+                {
+                  "icbId": 163,
+                  "icbCode": "8779",
+                  "icbName": "Cầm cố (8779 - Cấp 4)",
+                  "parentIcbId": 158,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 0,
+                  "childs": []
+                }
+              ]
+            },
+            {
+              "icbId": 353,
+              "icbCode": "8780",
+              "icbName": "Công ty Chứng khoán (8780 - Cấp 3)",
+              "parentIcbId": 157,
+              "icbLevel": 3,
+              "numberOfSymbols": 41,
+              "childs": [
+                {
+                  "icbId": 354,
+                  "icbCode": "8781",
+                  "icbName": "Công ty Chứng khoán (8781 - Cấp 4)",
+                  "parentIcbId": 353,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 41,
+                  "childs": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "icbId": 350,
+          "icbCode": "8900",
+          "icbName": "Đầu tư chứng khoán/phi chứng khoán (8900 - Cấp 2)",
+          "parentIcbId": 138,
+          "icbLevel": 2,
+          "numberOfSymbols": 23,
+          "childs": [
+            {
+              "icbId": 164,
+              "icbCode": "8980",
+              "icbName": "Quỹ đóng (8980 - Cấp 3)",
+              "parentIcbId": 350,
+              "icbLevel": 3,
+              "numberOfSymbols": 3,
+              "childs": [
+                {
+                  "icbId": 165,
+                  "icbCode": "8985",
+                  "icbName": "Quỹ đóng (8985 - Cấp 4)",
+                  "parentIcbId": 164,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 3,
+                  "childs": []
+                }
+              ]
+            },
+            {
+              "icbId": 351,
+              "icbCode": "8990",
+              "icbName": "Quỹ mở (8990 - Cấp 3)",
+              "parentIcbId": 350,
+              "icbLevel": 3,
+              "numberOfSymbols": 20,
+              "childs": [
+                {
+                  "icbId": 352,
+                  "icbCode": "8995",
+                  "icbName": "Quỹ mở (8995 - Cấp 4)",
+                  "parentIcbId": 351,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 20,
+                  "childs": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "icbId": 166,
+      "icbCode": "9000",
+      "icbName": "Công nghệ Thông tin (9000 - Cấp 1)",
+      "parentIcbId": 166,
+      "icbLevel": 1,
+      "numberOfSymbols": 31,
+      "childs": [
+        {
+          "icbId": 167,
+          "icbCode": "9500",
+          "icbName": "Công nghệ Thông tin (9500 - Cấp 2)",
+          "parentIcbId": 166,
+          "icbLevel": 2,
+          "numberOfSymbols": 31,
+          "childs": [
+            {
+              "icbId": 168,
+              "icbCode": "9530",
+              "icbName": "Phần mềm & Dịch vụ Máy tính (9530 - Cấp 3)",
+              "parentIcbId": 167,
+              "icbLevel": 3,
+              "numberOfSymbols": 11,
+              "childs": [
+                {
+                  "icbId": 169,
+                  "icbCode": "9533",
+                  "icbName": "Dịch vụ Máy tính (9533 - Cấp 4)",
+                  "parentIcbId": 168,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 0,
+                  "childs": []
+                },
+                {
+                  "icbId": 170,
+                  "icbCode": "9535",
+                  "icbName": "Internet (9535 - Cấp 4)",
+                  "parentIcbId": 168,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 1,
+                  "childs": []
+                },
+                {
+                  "icbId": 171,
+                  "icbCode": "9537",
+                  "icbName": "Phần mềm (9537 - Cấp 4)",
+                  "parentIcbId": 168,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 10,
+                  "childs": []
+                }
+              ]
+            },
+            {
+              "icbId": 172,
+              "icbCode": "9570",
+              "icbName": "Thiết bị và Phần cứng (9570 - Cấp 3)",
+              "parentIcbId": 167,
+              "icbLevel": 3,
+              "numberOfSymbols": 20,
+              "childs": [
+                {
+                  "icbId": 173,
+                  "icbCode": "9572",
+                  "icbName": "Phần cứng (9572 - Cấp 4)",
+                  "parentIcbId": 172,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 5,
+                  "childs": []
+                },
+                {
+                  "icbId": 174,
+                  "icbCode": "9574",
+                  "icbName": "Thiết bị văn phòng (9574 - Cấp 4)",
+                  "parentIcbId": 172,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 1,
+                  "childs": []
+                },
+                {
+                  "icbId": 175,
+                  "icbCode": "9576",
+                  "icbName": "Bán dẫn (9576 - Cấp 4)",
+                  "parentIcbId": 172,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 0,
+                  "childs": []
+                },
+                {
+                  "icbId": 176,
+                  "icbCode": "9578",
+                  "icbName": "Thiết bị viễn thông (9578 - Cấp 4)",
+                  "parentIcbId": 172,
+                  "icbLevel": 4,
+                  "numberOfSymbols": 14,
+                  "childs": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "targetUrl": null,
+  "success": true,
+  "error": null,
+  "unAuthorizedRequest": false,
+  "__abp": true
+}

@@ -6,3 +6,6 @@ pandas
 openpyxl
 numpy
 requests
+pandas-ta
+playwright
+apscheduler

@@ -9,12 +9,12 @@ if sys.platform.startswith('win'):
     except Exception:
         pass
 
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel
-from typing import List
+from typing import List, Dict, Any
 import pandas as pd
 from vnstock import Vnstock
 import os
@@ -25,6 +25,19 @@ import requests
 from datetime import datetime, timedelta
 import asyncio
 from ws_manager import orderbook_manager
+
+import math
+import tempfile
+import json
+import os
+
+# Tải trước bộ dữ liệu ICB cục bộ (để đạt tốc độ 0ms)
+try:
+    with open('sectors_mapping.json', 'r', encoding='utf-8') as f:
+        sectors_mapping = json.load(f)
+except Exception as e:
+    print(f"Warning: Không thể đọc sectors_mapping.json: {e}")
+    sectors_mapping = {}
 
 class RRGRequest(BaseModel):
     symbols: List[str]
@@ -1083,23 +1096,23 @@ def fetch_vietcap_api(endpoint: str, symbol: str, cache_type: str):
         return {"error": str(e)}
 
 @app.get("/api/company-details")
-async def get_company_details(symbol: str):
+def get_company_details(symbol: str):
     return fetch_vietcap_api(f"v1/company/details?ticker={symbol.upper()}", symbol, "details")
 
 @app.get("/api/company-shareholder-structure")
-async def get_company_shareholder_structure(symbol: str):
+def get_company_shareholder_structure(symbol: str):
     return fetch_vietcap_api(f"v1/company/{symbol.upper()}/shareholder-structure", symbol, "shareholder-structure")
 
 @app.get("/api/company-shareholders")
-async def get_company_shareholders(symbol: str):
+def get_company_shareholders(symbol: str):
     return fetch_vietcap_api(f"v1/company/{symbol.upper()}/shareholder", symbol, "shareholders")
 
 @app.get("/api/company-relationships")
-async def get_company_relationships(symbol: str):
+def get_company_relationships(symbol: str):
     return fetch_vietcap_api(f"v1/company/{symbol.upper()}/relationship", symbol, "relationships")
 
 @app.get("/api/company-events")
-async def get_company_events(symbol: str):
+def get_company_events(symbol: str):
     from datetime import datetime, timedelta
     symbol = symbol.upper()
     end_date = datetime.now().strftime('%Y-%m-%d')
@@ -1107,7 +1120,7 @@ async def get_company_events(symbol: str):
     return fetch_vietcap_api(f"v1/events?ticker={symbol}&fromDate={start_date}&toDate={end_date}", symbol, "events")
 
 @app.get("/api/company-news")
-async def get_company_news(symbol: str, page: int = 0, size: int = 20):
+def get_company_news(symbol: str, page: int = 0, size: int = 20):
     # Vietcap API is 0-indexed for pages
     from datetime import datetime, timedelta
     symbol = symbol.upper()
@@ -1116,7 +1129,7 @@ async def get_company_news(symbol: str, page: int = 0, size: int = 20):
     return fetch_vietcap_api(f"v1/news?ticker={symbol}&fromDate={start_date}&toDate={end_date}&page={page}&size={size}", f"{symbol}_p{page}", "news")
 
 @app.get('/api/realtime-prices')
-async def get_realtime_prices(symbols: str):
+def get_realtime_prices(symbols: str):
     import requests
     from datetime import datetime, timedelta
     try:
@@ -1129,6 +1142,516 @@ async def get_realtime_prices(symbols: str):
         return {'data': []}
     except Exception as e:
         return {'data': []}
+
+import pandas_ta as ta
+
+@app.get("/api/technical-signals")
+async def get_technical_signals(symbol: str, resolution: str = "D"):
+    try:
+        import requests
+        from datetime import datetime, timedelta
+        import time
+        import math
+        
+        symbol = symbol.upper()
+        end = int(time.time())
+        
+        is_weekly = resolution.upper() == "W"
+        fetch_res = "D" if is_weekly else resolution
+        
+        # Require 5 years for Weekly to calculate 200 SMA (~260 weeks), and 2 years for Daily (~500 days)
+        years_back = 5 if is_weekly else 2
+        start = end - years_back * 365 * 86400
+        
+        url = f"https://dchart-api.vndirect.com.vn/dchart/history?symbol={symbol}&resolution={fetch_res}&from={start}&to={end}"
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        res = requests.get(url, headers=headers, timeout=5)
+        
+        try:
+            data = res.json()
+        except Exception as e:
+            return JSONResponse({"status": "error", "message": f"API Error: {str(e)}"})
+            
+        if data.get('s') != 'ok':
+            return JSONResponse({"status": "error", "message": "No data"})
+            
+        df = pd.DataFrame({
+            'time': pd.to_datetime(data['t'], unit='s'),
+            'open': data['o'],
+            'high': data['h'],
+            'low': data['l'],
+            'close': data['c'],
+            'volume': data['v']
+        })
+        
+        if is_weekly:
+            df.set_index('time', inplace=True)
+            df = df.resample('W-FRI').agg({'open': 'first', 'high': 'max', 'low': 'min', 'close': 'last', 'volume': 'sum'}).dropna()
+            df.reset_index(inplace=True)
+        
+        # Calculate indicators
+        df.ta.rsi(length=14, append=True)
+        df.ta.stoch(k=14, d=3, smooth_k=1, append=True)
+        
+        # Calculate STOCHRSI manually according to the standard raw formula
+        # Note: TCBS uses n=5 for STOCHRSI_FASTK (both daily and weekly)
+        rsi_14 = df['RSI_14']
+        lowest_rsi = rsi_14.rolling(5).min()
+        highest_rsi = rsi_14.rolling(5).max()
+        df['STOCHRSI_FASTK'] = 100 * (rsi_14 - lowest_rsi) / (highest_rsi - lowest_rsi)
+
+        df.ta.macd(fast=12, slow=26, signal=9, append=True)
+        df.ta.adx(length=14, append=True)
+        df.ta.willr(length=14, append=True)
+        
+        # Calculate CCI manually due to pandas-ta bug with mad()
+        import numpy as np
+        tp = (df['high'] + df['low'] + df['close']) / 3
+        sma_tp = tp.rolling(20).mean()
+        mad = tp.rolling(20).apply(lambda x: np.mean(np.abs(x - x.mean())))
+        df['CCI_20'] = (tp - sma_tp) / (0.015 * mad)
+        
+        df.ta.roc(length=9, append=True)
+        df.ta.psar(af0=0.02, af=0.02, max_af=0.2, append=True)
+        df.ta.uo(fast=7, medium=14, slow=28, append=True)
+        df.ta.bbands(length=20, append=True)
+        
+        for p in [5, 10, 20, 50, 100, 200]:
+            df.ta.sma(length=p, append=True)
+            df.ta.ema(length=p, append=True)
+            
+        if len(df) < 2:
+            return JSONResponse({"status": "error", "message": "Not enough data"})
+            
+        latest = df.iloc[-1]
+        prev = df.iloc[-2]
+        price = latest['close']
+        
+        def safe_val(val):
+            if pd.isna(val) or math.isnan(val) or math.isinf(val):
+                return None
+            return float(val)
+            
+        def safe_round(val, decimals=2):
+            v = safe_val(val)
+            return round(v, decimals) if v is not None else None
+
+        def get_trend(curr, prev):
+            if curr is None or prev is None: return 0
+            if curr > prev: return 1
+            if curr < prev: return -1
+            return 0
+            
+        psar_val = safe_val(latest.get('PSARl_0.02_0.2', None))
+        if psar_val is None:
+            psar_val = safe_val(latest.get('PSARs_0.02_0.2', None))
+            
+        vals = {
+            'RSI': safe_round(latest.get('RSI_14')),
+            'STOCHK': safe_round(latest.get('STOCHk_14_3_1')),
+            'STOCHRSI_FASTK': safe_round(latest.get('STOCHRSI_FASTK')),
+            'MACD': safe_round(latest.get('MACD_12_26_9')),
+            'MACD_SIGNAL': safe_round(latest.get('MACDs_12_26_9')),
+            'MACD_HISTOGRAM': safe_round(latest.get('MACDh_12_26_9')),
+            'ADX': safe_round(latest.get('ADX_14')),
+            'DMP': safe_round(latest.get('DMP_14')),
+            'DMN': safe_round(latest.get('DMN_14')),
+            'WPR': safe_round(latest.get('WILLR_14')),
+            'CCI': safe_round(latest.get('CCI_20')),
+            'ROC': safe_round(latest.get('ROC_9')),
+            'SAR': safe_round(psar_val),
+            'ULTOSC': safe_round(latest.get('UO_7_14_28')),
+            'BB_WIDTH': safe_round(latest.get('BBB_20_2.0_2.0') / 100 if latest.get('BBB_20_2.0_2.0') is not None else None),
+            
+            'MACD_HISTOGRAM_DIR': get_trend(latest.get('MACDh_12_26_9'), prev.get('MACDh_12_26_9')),
+            'ADX_DIR': get_trend(price, prev['close']),
+            'ROC_DIR': get_trend(latest.get('ROC_9'), prev.get('ROC_9')),
+            'BB_WIDTH_DIR': get_trend(latest.get('BBB_20_2.0_2.0'), prev.get('BBB_20_2.0_2.0')),
+            'PRICE_DIR': get_trend(price, prev['close'])
+        }
+        
+        mas = {}
+        for p in [5, 10, 20, 50, 100, 200]:
+            mas[f'SMA_{p}'] = safe_round(latest.get(f'SMA_{p}'))
+            mas[f'EMA_{p}'] = safe_round(latest.get(f'EMA_{p}'))
+            
+        def is_approx(a, b, tol=0.001):
+            if a is None or b is None: return False
+            return abs(a - b) / a <= tol
+
+        def classify_tab1(vals):
+            signals = {}
+            v = vals['RSI']
+            if v is None: signals['RSI'] = 'TRUNG_TINH'
+            elif v > 70: signals['RSI'] = 'MUA'
+            elif v < 30: signals['RSI'] = 'BAN'
+            else: signals['RSI'] = 'TRUNG_TINH'
+            
+            v = vals['STOCHK']
+            if v is None: signals['STOCHK'] = 'TRUNG_TINH'
+            elif v > 80: signals['STOCHK'] = 'MUA'
+            elif v < 20: signals['STOCHK'] = 'BAN'
+            else: signals['STOCHK'] = 'TRUNG_TINH'
+            
+            v = vals['STOCHRSI_FASTK']
+            if v is None: signals['STOCHRSI_FASTK'] = 'TRUNG_TINH'
+            elif v > 80: signals['STOCHRSI_FASTK'] = 'MUA'
+            elif v < 20: signals['STOCHRSI_FASTK'] = 'BAN'
+            else: signals['STOCHRSI_FASTK'] = 'TRUNG_TINH'
+            
+            v = vals['WPR']
+            if v is None: signals['WPR'] = 'TRUNG_TINH'
+            elif v > -20: signals['WPR'] = 'MUA'
+            elif v < -80: signals['WPR'] = 'BAN'
+            else: signals['WPR'] = 'TRUNG_TINH'
+            
+            v = vals['CCI']
+            if v is None: signals['CCI'] = 'TRUNG_TINH'
+            elif v > 100: signals['CCI'] = 'MUA'
+            elif v < -100: signals['CCI'] = 'BAN'
+            else: signals['CCI'] = 'TRUNG_TINH'
+            
+            v = vals['ULTOSC']
+            if v is None: signals['ULTOSC'] = 'TRUNG_TINH'
+            elif v > 70: signals['ULTOSC'] = 'MUA'
+            elif v < 30: signals['ULTOSC'] = 'BAN'
+            else: signals['ULTOSC'] = 'TRUNG_TINH'
+            
+            m, s = vals['MACD'], vals['MACD_SIGNAL']
+            if m is None or s is None or m == s: signals['MACD'] = 'TRUNG_TINH'
+            elif m > s: signals['MACD'] = 'MUA'
+            else: signals['MACD'] = 'BAN'
+            
+            h, d = vals['MACD_HISTOGRAM'], vals['MACD_HISTOGRAM_DIR']
+            if h is None or h == 0 or d == 0: signals['MACD_HISTOGRAM'] = 'TRUNG_TINH'
+            elif h > 0 and d > 0: signals['MACD_HISTOGRAM'] = 'MUA'
+            elif h < 0 and d < 0: signals['MACD_HISTOGRAM'] = 'BAN'
+            else: signals['MACD_HISTOGRAM'] = 'TRUNG_TINH'
+            
+            v, dmp, dmn = vals['ADX'], vals.get('DMP'), vals.get('DMN')
+            if v is None or v < 25: signals['ADX'] = 'TRUNG_TINH'
+            elif dmp is not None and dmn is not None:
+                if dmp > dmn: signals['ADX'] = 'MUA'
+                elif dmn > dmp: signals['ADX'] = 'BAN'
+                else: signals['ADX'] = 'TRUNG_TINH'
+            else: signals['ADX'] = 'TRUNG_TINH'
+            v = vals['ROC']
+            if v is None: signals['ROC'] = 'TRUNG_TINH'
+            elif v > 10: signals['ROC'] = 'MUA'
+            elif v < -10: signals['ROC'] = 'BAN'
+            else: signals['ROC'] = 'TRUNG_TINH'
+            
+            v = vals['SAR']
+            if v is None or is_approx(price, v): signals['SAR'] = 'TRUNG_TINH'
+            elif price > v: signals['SAR'] = 'MUA'
+            else: signals['SAR'] = 'BAN'
+            
+            v = vals['BB_WIDTH']
+            p_dir = vals['PRICE_DIR']
+            ma20_val = mas.get('SMA_20')
+            
+            if v is None or ma20_val is None:
+                signals['BB_WIDTH'] = 'TRUNG_TINH'
+            elif v >= 0.10:
+                if price < ma20_val and p_dir < 0:
+                    signals['BB_WIDTH'] = 'BAN'
+                elif price > ma20_val and p_dir > 0:
+                    signals['BB_WIDTH'] = 'MUA'
+                else:
+                    signals['BB_WIDTH'] = 'TRUNG_TINH'
+            else:
+                signals['BB_WIDTH'] = 'TRUNG_TINH'
+            
+            return signals
+
+        def classify_tab2(vals):
+            signals = classify_tab1(vals) 
+            def reverse_ob_os(v, ob, os):
+                if v is None: return 'TRUNG_TINH'
+                if v > ob: return 'BAN'
+                if v < os: return 'MUA'
+                return 'TRUNG_TINH'
+                
+            signals['RSI'] = reverse_ob_os(vals['RSI'], 70, 30)
+            signals['STOCHK'] = reverse_ob_os(vals['STOCHK'], 80, 20)
+            signals['STOCHRSI_FASTK'] = reverse_ob_os(vals['STOCHRSI_FASTK'], 80, 20)
+            signals['WPR'] = reverse_ob_os(vals['WPR'], -20, -80)
+            signals['CCI'] = reverse_ob_os(vals['CCI'], 100, -100)
+            signals['ULTOSC'] = reverse_ob_os(vals['ULTOSC'], 70, 30)
+            return signals
+
+        ma_signals = {}
+        for k, v in mas.items():
+            if v is None: 
+                ma_signals[k] = None
+            elif is_approx(price, v):
+                ma_signals[k] = 'TRUNG_TINH'
+            elif price > v:
+                ma_signals[k] = 'MUA'
+            else:
+                ma_signals[k] = 'BAN'
+
+        def calc_gauge(sigs_list):
+            s = sum(1 for x in sigs_list if x == 'BAN')
+            n = sum(1 for x in sigs_list if x == 'TRUNG_TINH')
+            b = sum(1 for x in sigs_list if x == 'MUA')
+            t = s + n + b
+            if t == 0:
+                return {'state': 'TRUNG_TINH', 'score': 0, 'sell': 0, 'neutral': 0, 'buy': 0, 'needle_angle': 90}
+            
+            score = (b - s) / t
+            if score >= 0.6: state = 'MUA_MANH'
+            elif score >= 0.3: state = 'MUA'
+            elif score > -0.3: state = 'TRUNG_TINH'
+            elif score > -0.6: state = 'BAN'
+            else: state = 'BAN_MANH'
+            
+            angle = (score + 1) / 2 * 180
+            return {
+                'state': state, 'score': round(score, 3), 'needle_angle': round(angle, 1),
+                'sell': s, 'neutral': n, 'buy': b, 'total': t
+            }
+
+        res_data = {
+            'price': price,
+            'values': vals,
+            'mas': mas,
+            'tab1': {},
+            'tab2': {}
+        }
+        
+        t1_osc = classify_tab1(vals)
+        t1_ma_vals = [v for v in ma_signals.values() if v is not None]
+        t1_all = list(t1_osc.values()) + t1_ma_vals
+        
+        res_data['tab1'] = {
+            'signals': t1_osc,
+            'ma_signals': ma_signals,
+            'gauge_osc': calc_gauge(list(t1_osc.values())),
+            'gauge_ma': calc_gauge(t1_ma_vals),
+            'gauge_overall': calc_gauge(t1_all)
+        }
+        
+        t2_osc = classify_tab2(vals)
+        t2_all = list(t2_osc.values()) + t1_ma_vals
+        
+        res_data['tab2'] = {
+            'signals': t2_osc,
+            'ma_signals': ma_signals,
+            'gauge_osc': calc_gauge(list(t2_osc.values())),
+            'gauge_ma': calc_gauge(t1_ma_vals),
+            'gauge_overall': calc_gauge(t2_all)
+        }
+        
+        return JSONResponse({"status": "success", "data": res_data})
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return JSONResponse({"status": "error", "message": str(e)})
+
+@app.get('/api/vietcap/financial-statement')
+def get_vietcap_financial_statement(symbol: str, section: str):
+    endpoint = f"v1/company/{symbol}/financial-statement?section={section}"
+    return fetch_vietcap_api(endpoint, symbol, f"fin_stmt_{section}")
+
+@app.get('/api/vietcap/statistics-financial')
+def get_vietcap_statistics_financial(symbol: str):
+    endpoint = f"v1/company/{symbol}/statistics-financial"
+    return fetch_vietcap_api(endpoint, symbol, "stat_fin")
+
+@app.get('/api/vietcap/metrics')
+def get_vietcap_metrics(symbol: str):
+    return fetch_vietcap_api(f"v1/company/{symbol}/financial-statement/metrics", symbol, "fin_metrics")
+
+@app.get('/api/vietcap/sectors/icb-codes')
+def get_vietcap_icb_codes():
+    import json
+    import os
+    try:
+        with open('fialda_icb.json', 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            return {"data": data} if isinstance(data, list) else data
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.get('/api/fialda/sector-stocks/{icb_code}')
+def get_fialda_sector_stocks(icb_code: str):
+    import json
+    try:
+        with open('fialda_stock_mapping.json', 'r', encoding='utf-8') as f:
+            mapping = json.load(f)
+        stocks = mapping.get("sector_to_stocks", {}).get(icb_code, [])
+        return {"icbCode": icb_code, "symbols": stocks}
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.post('/api/fialda/sync')
+def sync_fialda_manual():
+    import subprocess
+    import os
+    script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fialda_scraper.py')
+    try:
+        result = subprocess.run(['python', script_path], capture_output=True, text=True, check=True)
+        return {"status": "success", "message": "Đồng bộ thành công."}
+    except subprocess.CalledProcessError as e:
+        return {"status": "error", "message": "Lỗi khi đồng bộ dữ liệu.", "details": e.stderr}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+@app.get('/api/vndirect/history')
+def get_vndirect_history(symbol: str, resolution: str, from_ts: int, to_ts: int):
+    import requests
+    url = f"https://dchart-api.vndirect.com.vn/dchart/history?symbol={symbol}&resolution={resolution}&from={from_ts}&to={to_ts}"
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+    try:
+        res = requests.get(url, headers=headers)
+        return res.json()
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.get('/api/vietcap/company/search-bar')
+def get_vietcap_search_bar(keyword: str = ''):
+    import requests
+    url = f'https://iq.vietcap.com.vn/api/iq-insight-service/v2/company/search-bar?keyword={keyword}'
+    res = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
+    return res.json()
+
+@app.get('/api/vietcap/company/by-sector')
+def get_vietcap_by_sector(sectorId: str):
+    mapping_exact = {
+        # Ngân hàng & Tài chính
+        "8355": ["VCB", "BID", "CTG", "MBB", "ACB", "TCB", "VPB", "HDB", "STB", "VIB", "SHB", "EIB", "LPB", "TPB", "MSB", "OCB"],
+        "8773": ["SSI", "VND", "VCI", "HCM", "SHS", "MBS", "VIX", "FTS", "BSI", "CTS", "AGR"],
+        "8633": ["VHM", "VIC", "VRE", "NVL", "KDH", "NLG", "PDR", "DIG", "DXG", "CEO", "HDG", "CRE"],
+        
+        # Công nghệ & Hàng hóa
+        "3577": ["FPT", "CMG", "ELC", "ITD", "SAM", "ICT", "SGT"],
+        "3535": ["VNM", "MCH", "SAB", "MSN", "QNS", "KDC", "SBT", "DBC"],
+        
+        # Nguyên vật liệu
+        "1353": ["GVR", "PHR", "DPR", "AAA", "DRC", "CSM"], # Nhựa, cao su & sợi
+        "1357": ["DGC", "CSV", "DPM", "DCM", "BFC", "LAS"], # Hóa chất chuyên dụng (Hóa chất, phân bón)
+        "1350": ["GVR", "PHR", "DPR", "AAA", "DGC", "CSV", "DPM", "DCM"], # Hóa chất nói chung
+        "1755": ["HPG", "HSG", "NKG", "POM", "SMC", "TLH"], # Thép (Kim loại công nghiệp)
+        "1700": ["PTB", "VCS", "HT1", "BCC"], # Xây dựng và Vật liệu
+        
+        # Dầu khí (Cấp 4)
+        "0533": ["GAS", "PVD"], # Sản xuất và Khai thác
+        "0537": ["BSR", "PLX", "OIL"], # Tổ hợp Dầu khí (Lọc hóa, Bán lẻ)
+        "0573": ["PVS", "PVC", "PVT", "POS"], # Thiết bị và Dịch vụ Dầu khí
+        "0577": ["GAS", "PGD", "CNG", "PVT"], # Ống dẫn dầu / Vận chuyển khí
+        
+        # Dầu khí (Cấp 3)
+        "0530": ["GAS", "PVD", "BSR", "PLX", "OIL"], # Sản xuất Dầu khí (Tổng hợp 0533 + 0537)
+        "0570": ["PVS", "PVC", "PVT", "POS"] # Phân phối Dầu khí (Tổng hợp 0573)
+    }
+    
+    # Gom nhóm theo mã Level 1 (Ngành cấp 1) dựa trên ký tự đầu tiên
+    mapping_level1 = {
+        "0": ["GAS", "PVD", "PVS", "BSR", "OIL", "PLX", "PVC", "PVT", "POS"], # Dầu khí
+        "1": ["HPG", "HSG", "NKG", "DPM", "DCM", "GVR", "PHR", "DPR", "PTB", "AAA", "CSV", "DGC"], # Nguyên vật liệu
+        "2": ["VGC", "SZC", "KBC", "IDC", "GMD", "HAH", "MVN", "PC1", "VSH", "REE", "CII"], # Công nghiệp
+        "3": ["VNM", "MSN", "SAB", "MWG", "PNJ", "FRT", "DGW", "PET", "QNS", "KDC", "TLG"], # Hàng tiêu dùng
+        "4": ["DHG", "IMP", "TRA", "DMC", "AMV", "JVC", "DBD"], # Dược phẩm và Y tế
+        "5": ["VJC", "HVN", "SCS", "AST", "SKG", "VTR"], # Dịch vụ tiêu dùng
+        "6": ["FOC", "VGI", "CTR", "YEG", "FOX", "TTN"], # Viễn thông
+        "7": ["GAS", "POW", "NT2", "REE", "PPC", "GEG", "SJD", "TDM", "BWE", "QTP", "CHP"], # Tiện ích cộng đồng
+        "8": ["VCB", "BID", "CTG", "MBB", "TCB", "VPB", "ACB", "SSI", "VND", "VHM", "VIC", "VRE", "NVL"], # Tài chính
+        "9": ["FPT", "CMG", "ELC", "ITD", "SAM", "ICT", "SGT"] # Công nghệ thông tin
+    }
+    
+    # BƯỚC 1: Thử lấy dữ liệu từ file local sectors_mapping.json (nhanh 0ms, đầy đủ 100%)
+    if sectorId in sectors_mapping:
+        symbols = sectors_mapping[sectorId]
+        if len(symbols) > 0:
+            return {"data": symbols}
+            
+    import requests
+    
+    # BƯỚC 2: Thử gọi API VNDirect trực tiếp (nếu file JSON chưa có)
+    try:
+        url = f"https://finfo-api.vndirect.com.vn/v4/stocks?q=industryCode:{sectorId}~type:STOCK~status:LISTED&size=100"
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "Origin": "https://dboard.vndirect.com.vn",
+            "Referer": "https://dboard.vndirect.com.vn/"
+        }
+        res = requests.get(url, headers=headers, timeout=5)
+        if res.status_code == 200:
+            data = res.json().get('data', [])
+            symbols = [item['symbol'] for item in data]
+            if len(symbols) > 0:
+                return {"data": symbols}
+    except Exception as e:
+        print(f"Lỗi kết nối VNDirect API, chuyển sang dữ liệu dự phòng: {e}")
+        
+    # BƯỚC 3: Cơ chế dự phòng cứng
+    symbols = []
+    if sectorId in mapping_exact:
+        symbols = mapping_exact[sectorId]
+    elif sectorId and (sectorId.endswith('00') or sectorId == '0001'):
+        first_digit = sectorId[0]
+        if first_digit in mapping_level1:
+            symbols = mapping_level1[first_digit]
+            
+    return {"data": symbols}
+
+class ExportRequest(BaseModel):
+    symbol: str
+    tab: str
+    format: str
+    columns: List[str]
+    data: List[Dict[str, Any]]
+
+@app.post('/api/vietcap/export')
+async def export_vietcap_data(req: ExportRequest, background_tasks: BackgroundTasks):
+    df = pd.DataFrame(req.data, columns=req.columns)
+    
+    ext = 'xlsx' if req.format == 'excel' else req.format
+    fd, path = tempfile.mkstemp(suffix=f".{ext}")
+    os.close(fd)
+    
+    try:
+        if req.format == 'csv':
+            df.to_csv(path, index=False, encoding='utf-8-sig')
+        elif req.format == 'excel':
+            df.to_excel(path, index=False)
+        elif req.format == 'dta':
+            new_cols = []
+            for col in df.columns:
+                clean_col = col.replace('/', '_').replace('-', '_').replace(' ', '_')
+                new_cols.append(clean_col)
+            df.columns = new_cols
+            
+            for col in df.columns:
+                if col != 'Khoan_muc':
+                    df[col] = pd.to_numeric(df[col], errors='coerce')
+            
+            df.to_stata(path, write_index=False, version=118)
+            
+        background_tasks.add_task(os.remove, path)
+        return FileResponse(path, filename=f"{req.symbol}_{req.tab}.{ext}")
+    except Exception as e:
+        background_tasks.add_task(os.remove, path)
+        return JSONResponse({"status": "error", "message": str(e)}, status_code=500)
+
+from apscheduler.schedulers.background import BackgroundScheduler
+import subprocess
+
+def run_fialda_scraper():
+    import os
+    script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fialda_scraper.py')
+    print("[Cron] Đang chạy đồng bộ Fialda hàng tuần...")
+    subprocess.Popen(['python', script_path])
+
+@app.on_event("startup")
+def setup_scheduler():
+    scheduler = BackgroundScheduler()
+    # Chạy vào 00:00 Chủ Nhật hàng tuần (day_of_week='sun', hour=0, minute=0)
+    scheduler.add_job(run_fialda_scraper, 'cron', day_of_week='sun', hour=0, minute=0)
+    scheduler.start()
+    print("[Cron] Scheduler đã bắt đầu. Lịch cập nhật Fialda: 00:00 Chủ Nhật.")
 
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
